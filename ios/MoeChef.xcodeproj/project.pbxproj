@@ -1,0 +1,363 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A901020304050607080910111 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A601020304050607080910111 /* AuthService.swift */; };
+		AA01020304050607080910111 /* SupabaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A701020304050607080910111 /* SupabaseConfig.swift */; };
+		AB01020304050607080910111 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A801020304050607080910111 /* LoginView.swift */; };
+		AC01020304050607080910111 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC11020304050607080910111 /* AppConfig.swift */; };
+		AD01020304050607080910111 /* CachedRemoteImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD11020304050607080910111 /* CachedRemoteImage.swift */; };
+		B201020304050607080910111 /* MoeChefApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F60718293041526374859601 /* MoeChefApp.swift */; };
+		B301020304050607080910111 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F607182930415263748596010 /* ContentView.swift */; };
+		B401020304050607080910111 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07182930415263748596010203 /* Theme.swift */; };
+		B501020304050607080910111 /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18293041526374859601020304 /* Recipe.swift */; };
+		B601020304050607080910111 /* CatProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29304152637485960102030405 /* CatProfile.swift */; };
+		B701020304050607080910111 /* ForbiddenItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30415263748596010203040506 /* ForbiddenItem.swift */; };
+		B801020304050607080910111 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41526374859601020304050607 /* HomeView.swift */; };
+		B901020304050607080910111 /* RecipeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52637485960102030405060708 /* RecipeCardView.swift */; };
+		BA01020304050607080910111 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63748596010203040506070809 /* DetailView.swift */; };
+		BB01020304050607080910111 /* ManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74859601020304050607080910 /* ManagementView.swift */; };
+		BD01020304050607080910111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85960102030405060708091011 /* Assets.xcassets */; };
+		CE01020304050607080910111 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = C001020304050607080910111 /* Supabase */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		07182930415263748596010203 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		18293041526374859601020304 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
+		29304152637485960102030405 /* CatProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatProfile.swift; sourceTree = "<group>"; };
+		30415263748596010203040506 /* ForbiddenItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForbiddenItem.swift; sourceTree = "<group>"; };
+		AD11020304050607080910111 /* CachedRemoteImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedRemoteImage.swift; sourceTree = "<group>"; };
+		41526374859601020304050607 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		52637485960102030405060708 /* RecipeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCardView.swift; sourceTree = "<group>"; };
+		63748596010203040506070809 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		74859601020304050607080910 /* ManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementView.swift; sourceTree = "<group>"; };
+		85960102030405060708091011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9601020304050607080910111 /* MoeChef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoeChef.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A601020304050607080910111 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		A701020304050607080910111 /* SupabaseConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseConfig.swift; sourceTree = "<group>"; };
+		A801020304050607080910111 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		AC11020304050607080910111 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		BE01020304050607080910111 /* MoeChef.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeChef.entitlements; sourceTree = "<group>"; };
+		E5F60718293041526374859601 /* MoeChefApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeChefApp.swift; sourceTree = "<group>"; };
+		F607182930415263748596010 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CD01020304050607080910111 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE01020304050607080910111 /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A001020304050607080910111 = {
+			isa = PBXGroup;
+			children = (
+				A101020304050607080910111 /* MoeChef */,
+				9601020304050607080910111 /* MoeChef.app */,
+			);
+			sourceTree = "<group>";
+		};
+		A101020304050607080910111 /* MoeChef */ = {
+			isa = PBXGroup;
+			children = (
+				E5F60718293041526374859601 /* MoeChefApp.swift */,
+				F607182930415263748596010 /* ContentView.swift */,
+				85960102030405060708091011 /* Assets.xcassets */,
+				BE01020304050607080910111 /* MoeChef.entitlements */,
+				A201020304050607080910111 /* Theme */,
+				A301020304050607080910111 /* Models */,
+				A401020304050607080910111 /* Views */,
+				A501020304050607080910111 /* Services */,
+			);
+			path = MoeChef;
+			sourceTree = "<group>";
+		};
+		A201020304050607080910111 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				07182930415263748596010203 /* Theme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		A301020304050607080910111 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				18293041526374859601020304 /* Recipe.swift */,
+				29304152637485960102030405 /* CatProfile.swift */,
+				30415263748596010203040506 /* ForbiddenItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A401020304050607080910111 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AD11020304050607080910111 /* CachedRemoteImage.swift */,
+				41526374859601020304050607 /* HomeView.swift */,
+				52637485960102030405060708 /* RecipeCardView.swift */,
+				63748596010203040506070809 /* DetailView.swift */,
+				74859601020304050607080910 /* ManagementView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A501020304050607080910111 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A601020304050607080910111 /* AuthService.swift */,
+				A701020304050607080910111 /* SupabaseConfig.swift */,
+				A801020304050607080910111 /* LoginView.swift */,
+				AC11020304050607080910111 /* AppConfig.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C301020304050607080910111 /* MoeChef */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C401020304050607080910111 /* Build configuration list for PBXNativeTarget "MoeChef" */;
+			buildPhases = (
+				B101020304050607080910111 /* Sources */,
+				CD01020304050607080910111 /* Frameworks */,
+				BC01020304050607080910111 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MoeChef;
+			packageProductDependencies = (
+				C001020304050607080910111 /* Supabase */,
+			);
+			productName = MoeChef;
+			productReference = 9601020304050607080910111 /* MoeChef.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C101020304050607080910111 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = C201020304050607080910111 /* Build configuration list for PBXProject "MoeChef" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = "zh-Hans";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				"zh-Hans",
+				Base,
+			);
+			mainGroup = A001020304050607080910111;
+			packageReferences = (
+				BF01020304050607080910111 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
+			productRefGroup = A001020304050607080910111;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C301020304050607080910111 /* MoeChef */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BC01020304050607080910111 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD01020304050607080910111 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B101020304050607080910111 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B201020304050607080910111 /* MoeChefApp.swift in Sources */,
+				B301020304050607080910111 /* ContentView.swift in Sources */,
+				B401020304050607080910111 /* Theme.swift in Sources */,
+				B501020304050607080910111 /* Recipe.swift in Sources */,
+				B601020304050607080910111 /* CatProfile.swift in Sources */,
+				B701020304050607080910111 /* ForbiddenItem.swift in Sources */,
+				AD01020304050607080910111 /* CachedRemoteImage.swift in Sources */,
+				B801020304050607080910111 /* HomeView.swift in Sources */,
+				B901020304050607080910111 /* RecipeCardView.swift in Sources */,
+				BA01020304050607080910111 /* DetailView.swift in Sources */,
+				BB01020304050607080910111 /* ManagementView.swift in Sources */,
+				A901020304050607080910111 /* AuthService.swift in Sources */,
+				AA01020304050607080910111 /* SupabaseConfig.swift in Sources */,
+				AB01020304050607080910111 /* LoginView.swift in Sources */,
+				AC01020304050607080910111 /* AppConfig.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3D4E5F6071829304152 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B2C3D4E5F607182930415263 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C3D4E5F60718293041526374 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MoeChef/MoeChef.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = S6Z3M6PWBH;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moechef.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D4E5F6071829304152637485 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MoeChef/MoeChef.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = S6Z3M6PWBH;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moechef.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C201020304050607080910111 /* Build configuration list for PBXProject "MoeChef" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F6071829304152 /* Debug */,
+				B2C3D4E5F607182930415263 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C401020304050607080910111 /* Build configuration list for PBXNativeTarget "MoeChef" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C3D4E5F60718293041526374 /* Debug */,
+				D4E5F6071829304152637485 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BF01020304050607080910111 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C001020304050607080910111 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BF01020304050607080910111 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = C101020304050607080910111 /* Project object */;
+}

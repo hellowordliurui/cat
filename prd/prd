@@ -1,0 +1,291 @@
+产品定义：一款主打"视觉美学"与"绝对安全"的猫咪精致辅食（下午茶）指南。
+核心理念：用 AI 过滤风险，用美学治愈生活。
+目标平台：iOS (针对 Cursor 开发优化)。
+
+---
+一、 视觉与交互系统 (Visual & UX)
+1.1 温馨治愈色调 (Color Palette)
+界面应用建议 (UI Implementation)
+卡片设计 (Card Glassmorphism)：
+
+卡片背景不要使用纯白，使用带有 0.8 透明度的瓷白色。
+
+加上 iOS 特有的 .ultraThinMaterial (磨砂玻璃) 效果，让背景色隐约透出，产生"呼吸感"。
+
+渐变应用 (Luminous Gradient)：
+
+核心按钮使用 落日珊瑚 (#FF7E5F) 到 香槟缎面 (#F3E5AB) 的线性渐变。
+
+这种渐变会产生一种"正在发光"的视觉错觉，非常靓丽且高级。
+
+投影规范 (Premium Shadow)：
+
+禁止使用纯黑色投影。
+
+使用 落日珊瑚色 (#FF7E5F) 的深色调作为投影，透明度设为 10%，模糊度设为 20pt。这会让卡片看起来像"悬浮在光芒之上"。
+
+🖼️ 色系视觉层级
+70% 底色：冷瓷白（保持清透、高级、留白感）。
+
+20% 辅助：香槟金 + 蒂芙尼蓝（提升精致度、专业感）。
+
+10% 亮色：落日珊瑚（点睛之笔，制造靓丽的治愈瞬间）。
+
+---
+二、 核心页面 ASCII 原型图
+2.1 首页：灵感画廊 
+- 逻辑：顶部横向 Tab（全部、冷饮、慕斯等），下方卡片流。每道菜必配图。
+Plaintext
+_________________________________________
+| M o e C h e f             [👤 我的] |
+|_______________________________________|
+|                                       |
+|  [ 全部 ] [ 🍦冷饮 ] [ 🍮慕斯 ] [ 🍰蛋糕 ] |
+|_______________________________________|
+|                                       |
+|  🌟 属于【大黄】的午后治愈灵感            |
+|                                       |
+|  +-----------------------------------+|
+|  |           .-------.               ||
+|  |         .'         `.             ||
+|  |        /   📸 每一道   \            ||
+|  |       |    菜都经过    |            ||
+|  |       |    AI 安全审计 |            ||
+|  |        \             /            ||
+|  |         `.         .'             ||
+|  |           '-------'               ||
+|  |                                   ||
+|  |      "海风三文鱼慕斯 (护心版)"       ||
+|  +-----------------------------------+|
+|                                       |
+|  +-----------------++-----------------+|
+|  |     .-----.     ||     .-----.     ||
+|  |   .'       `.   ||   .'       `.   ||
+|  |   | 📸 慕斯 |   ||   | 📸 派对 |   ||
+|  |   `.       .'   ||   `.       .'   ||
+|  |     '-----'     ||     '-----'     ||
+|  |   元气肉泥塔    ||   蓝莓鸡肉冻    ||
+|  +-----------------++-----------------+|
+2.2 详情页：AI 动态适配与制作
+- 逻辑：移除采购清单。展示 3 步流程及底部的 AI 自动生成的品种补丁。
+Plaintext
+_________________________________________
+| [返回]        🍑 蜜桃色三文鱼慕斯      |
+|_______________________________________|
+|                                       |
+|             .-----------.             |
+|           .'             `.           |
+|          /  📸 高清成品图  \          |
+|         |   (治愈系摄影)    |          |
+|          \                 /          |
+|           `.             .'           |
+|             '-----------'             |
+|                                       |
+|  "一份充满大海味道的轻盈慕斯。"         |
+|  -----------------------------------  |
+|                                       |
+|  🛒 极简食材 (一餐份)                  |
+|  - 🥩 三文鱼: 约手掌大小               |
+|  - 🥛 羊奶粉: 1小勺                   |
+|                                       |
+|  👨‍🍳 3步变身                           |
+|  1. 将鱼肉蒸熟，与奶粉一同压成泥状。    |
+|  2. 倒入猫爪模具，冷藏 2 小时。          |
+|  -----------------------------------  |
+|                                       |
+|  [ 🪄 AI 专业品种建议 ]                 |
+|  💡 大黄是【英短】，AI 建议：           |
+|  针对其易胖体质，本配方已自动剔除原始    |
+|  数据中的[糖分]，建议额外添加鸭心。      |
+|                                       |
+|  🛡️ [AI 入库安全检测：已通过]           |
+|_______________________________________|
+2.3 管理中心与安全红线 
+- 逻辑：收纳猫咪档案及由 AI 每日审计的"禁忌食物清单"。
+Plaintext
+_________________________________________
+| [返回]        👤 管理中心             |
+|_______________________________________|
+|                                       |
+|   [ 🐈 猫咪档案 (已设置: 大黄/英短) ]   |
+|                                       |
+|   [ 🚫 禁忌清单：铲屎官安全红线 ]       |  
+|   ---------------------------------   |
+|   | 🔴 致命类：洋葱、巧克力、葡萄     |   |
+|   | 🟡 风险类：牛奶、生蛋白、高盐     |   |
+|   | 💡 提示：此清单由 AI 每日审计更新 |   |
+|   ---------------------------------   |
+|                                       |
+|   [ ⚙️ 账户设置 ]                      |
+|_______________________________________|
+
+---
+三、 技术架构方案（当前实现）
+
+3.1 前端：SwiftUI 原生架构
+- UI 框架：SwiftUI (声明式语法，极大提升 Cursor 代码生成精度)。
+- 状态管理：Observation Framework (iOS 17+)。
+- 数据持久化：SwiftData（本地猫咪档案）。
+- 网络层：URLSession + Async/Await。
+- 地址管理：AppConfig.swift 统一维护后端 URL，真机/模拟器/生产只需改一处。
+  - backendBaseURL：默认 http://127.0.0.1:8000（模拟器），真机改为局域网 IP。
+
+3.2 后端：Python FastAPI + Supabase 全家桶
+- **API 框架**：Python FastAPI，uvicorn 启动，支持 --reload 热重载。
+- **启动命令**：`cd backend && ./.venv/bin/python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
+
+- **统一数据库：Supabase PostgreSQL**（已替代原 MongoDB 方案）
+  - 项目 ID：jqigumxkgbkxccvymotd，区域：us-east-1
+  - 项目 URL：https://jqigumxkgbkxccvymotd.supabase.co
+  - 连接方式：Supabase REST API（PostgREST/HTTPS），不使用 asyncpg TCP 直连
+    - 原因：直连域名 db.*.supabase.co 在当前网络环境无 DNS 记录；HTTPS 接口正常可达
+  - 环境变量：SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_STORAGE_BUCKET
+
+- **图片 CDN：Supabase Storage**
+  - Bucket：recipe-covers（公开读）
+  - 封面图 URL 格式：`https://jqigumxkgbkxccvymotd.supabase.co/storage/v1/object/public/recipe-covers/<hash>.jpg`
+  - 新食谱入库时，豆包生图后直接上传 Storage，返回 CDN 地址写入 image_url 字段
+  - 降级：Storage 上传失败时，保存到 backend/static/generated/ 本地目录
+
+- **无 Redis，安全拦截逻辑 (Memory-First)**：
+  - 冷启动：FastAPI 启动时，从 Supabase REST API 读取 forbidden_items 表到内存 set。
+  - 实时拦截：AI 入库审计直接在内存做禁忌词匹配，查询延迟约等于内存读取。
+  - 降级：Supabase 请求失败时使用内置默认禁忌词（洋葱/巧克力/葡萄 + 牛奶/高盐）。
+
+- **MongoDB**（保留备用，当前不使用）
+  - 环境变量：MONGODB_URL / MONGODB_DB=moechef
+  - 当前食谱链路已全部迁移至 Supabase，MongoDB 暂不启用
+
+3.3 数据库表结构（Supabase PostgreSQL）
+
+**recipes**（食谱主表，当前 3 条）
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | uuid | 主键，gen_random_uuid() |
+| title | text | 食谱名称，唯一键（upsert 依据） |
+| subtitle | text | 副标题 |
+| category | text | 分类：mousse / cake / cold |
+| image_url | text | Supabase Storage CDN 地址 |
+| ingredients | jsonb | `[{"name":"三文鱼","amount":"约手掌大小"}]` |
+| steps | jsonb | `["步骤1","步骤2"]` |
+| ai_breed_note | text | AI 品种补丁文案 |
+| safety_passed | boolean | 是否通过安全审计，默认 true |
+| created_at / updated_at | timestamptz | 时间戳 |
+
+当前数据（3 条）：
+- 草莓蛋糕（cake）
+- 海风三文鱼慕斯 护心版（mousse）
+- 芒果蛋糕（cake）
+
+**forbidden_items**（禁忌食物，RLS 关闭，当前 14 条）
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | uuid | 主键 |
+| name | text | 食物名称，唯一 |
+| category | text | fatal / risk / info |
+| description | text | 说明 |
+| created_at / updated_at | timestamptz | 时间戳 |
+
+**profiles**（用户档案，RLS 开启，与 auth.users 1:1）
+| 字段 | 类型 |
+|------|------|
+| id | uuid（FK → auth.users） |
+| display_name / avatar_url | text |
+
+**cats**（猫咪档案，RLS 开启，与 auth.users 关联）
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | uuid | 主键 |
+| user_id | uuid（FK → auth.users） | |
+| name / breed | text | 猫名、品种 |
+| body_weight_kg | numeric | 体重，用于 RER/DER 计算 |
+
+3.4 后端 API 接口（当前实现）
+
+| 方法 & 路径 | 职责 | 数据来源 |
+|------------|------|---------|
+| GET /health | 健康检查，返回 200 | — |
+| GET /api/recipes | 食谱列表（支持 ?category= 过滤） | Supabase recipes 表 |
+| POST /api/recipes | 食谱入库：审计 → 生图 → 写 Supabase | 豆包 + Supabase |
+| GET /api/forbidden | 禁忌清单（内存缓存） | 启动时加载自 Supabase |
+| POST /api/audit | 仅审计，不写库 | 内存 forbidden_words_set |
+| GET /api/generate-image | 调用豆包 Seedream 生图 | 豆包 API |
+| GET /db-view | HTML 数据预览页 | Supabase |
+
+**响应格式（GET /api/recipes）**
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "title": "草莓蛋糕",
+      "subtitle": "猫咪可食的草莓风味小蛋糕，无糖无添加。",
+      "category": "cake",
+      "imageURL": "https://jqigumxkgbkxccvymotd.supabase.co/storage/v1/object/public/recipe-covers/84995e9451fa.jpg",
+      "ingredients": [{"name": "鸡胸肉", "amount": "约50g"}],
+      "steps": ["步骤1", "步骤2"],
+      "aiBreedNote": "...",
+      "safetyPassed": true
+    }
+  ],
+  "source": "postgres",
+  "dbError": null
+}
+```
+
+3.5 食谱入库完整流程（POST /api/recipes）
+1. 接收请求体（含 title、ingredients、steps 等）
+2. **审计**：内存禁忌词 set 匹配，含禁忌食材返回 400，拒绝入库
+3. **生图**：若无 imageURL，调用豆包 Seedream 生成封面图
+4. **上传图片**：上传到 Supabase Storage recipe-covers bucket，得到 CDN URL
+5. **写库**：POST 到 Supabase REST API，按 title upsert 到 recipes 表
+6. 返回 `{ "passed": true, "recipe": { ...含 id 和 imageURL... } }`
+
+3.6 环境变量（backend/.env）
+| 变量 | 用途 |
+|------|------|
+| DOUBAO_API_KEY | 豆包 API Key（对话 + 生图） |
+| SUPABASE_URL | Supabase 项目 URL（REST API 地址） |
+| SUPABASE_ANON_KEY | Supabase anon key（客户端/后端 REST 调用） |
+| SUPABASE_STORAGE_BUCKET | Storage Bucket 名，默认 recipe-covers |
+| DATABASE_URL | PostgreSQL 连接串（保留，当前未用于 asyncpg） |
+| MONGODB_URL / MONGODB_DB | MongoDB 连接（保留备用，当前不启用） |
+
+3.7 AI 引擎：豆包（火山方舟）
+- 入库审计：静态禁忌词过滤（内存 set），不安全则拒绝入库
+- 封面生图：豆包 Seedream（doubao-seedream-4-0-250828），生成后存 Supabase Storage CDN
+- 可扩展：语义审计与治愈系文案润色（当前为静态过滤 + TODO）
+
+3.8 科学计算逻辑
+后端代码强制执行以下公式，作为 AI 建议的约束：
+1. 静息能量需求（RER）：
+$$RER = 70 \times (body\_weight)^{0.75}$$
+2. 辅食上限（DER_snack）：
+$$DER_{snack} = RER \times 10\%$$
+（确保下午茶热量不超过每日总需求的 10%）
+
+---
+四、 Cursor 开发路线图
+
+Phase 1 (UI & Local)：✅ 已完成
+- SwiftUI 首页瀑布流（Cool Porcelain + Sunset Coral 色系）
+- SwiftData 本地猫咪档案存储
+
+Phase 2 (FastAPI & Supabase)：✅ 已完成
+- Supabase PostgreSQL 存储禁忌食物清单（14 条）与食谱（3 条）
+- FastAPI 启动时从 Supabase REST API 加载禁忌词到内存
+- AI 入库审计接口（静态词过滤）
+- Supabase Auth 用户体系（profiles / cats 表）
+
+Phase 3 (图片 CDN)：✅ 已完成
+- 豆包 Seedream 生图，封面图存入 Supabase Storage recipe-covers
+- 存量图片已迁移：3 张本地图 → Supabase Storage CDN
+- iOS 端直接从 CDN 加载图片，不依赖后端本地文件
+
+Phase 4 (Final Polish)：🚧 进行中
+- iOS 端与后端 API 对接，AppConfig.swift 集中管理地址
+- AI 品种补丁实时显示（aiBreedNote 字段已就绪）
+- 真机联调（backendBaseURL 改为局域网 IP 即可）
+- 待完成：豆包语义审计 + 文案润色、猫咪档案与食谱 DER 联动
+
+---

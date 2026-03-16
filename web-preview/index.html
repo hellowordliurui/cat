@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MoeChef 预览</title>
+  <style>
+    /* PRD 1.1 视觉与交互：70% 冷瓷白 / 20% 香槟金+蒂芙尼蓝 / 10% 落日珊瑚；卡片玻璃态；落日珊瑚投影；核心按钮渐变 */
+    :root {
+      --bg: #f7f9fc;
+      --card-glass: rgba(255, 254, 249, 0.8);
+      --coral: #ff7e5f;
+      --champagne: #f3e5ab;
+      --tiffany: #7ec8e3;
+      --text: #38383f;
+      --text-secondary: #737380;
+      --radius: 28px;
+      --shadow-coral: rgba(255, 126, 95, 0.1);
+      --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 2rem; }
+    .header {
+      padding: 12px 20px; background: rgba(247,249,252,0.98); position: sticky; top: 0; z-index: 10;
+    }
+    .header h1 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+    .search-wrap {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; background: var(--card-glass); backdrop-filter: blur(12px);
+      border-radius: 18px; border: 1px solid rgba(255,255,255,0.35);
+      box-shadow: 0 4px 12px rgba(255,126,95,0.06);
+    }
+    .search-wrap .search-icon { color: var(--text-secondary); font-size: 1rem; flex-shrink: 0; }
+    .search-wrap input { flex: 1; border: none; background: none; font-size: 0.9375rem; outline: none; }
+    .search-wrap input::placeholder { color: var(--text-secondary); }
+    .search-wrap .clear-btn { color: var(--text-secondary); cursor: pointer; padding: 4px; display: none; }
+    .search-wrap.has-text .clear-btn { display: block; }
+    .profile-btn { position: absolute; top: 56px; right: 20px; font-size: 1.5rem; color: var(--coral); cursor: pointer; z-index: 11; }
+    .tabs { display: flex; gap: 12px; padding: 12px 20px; overflow-x: auto; background: var(--bg); }
+    .tab { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 999px; font-size: 0.875rem; font-weight: 500; white-space: nowrap; cursor: pointer; background: var(--card-glass); color: var(--text); backdrop-filter: blur(12px); }
+    .tab.active { background: linear-gradient(90deg, var(--coral), var(--champagne)); color: #fff; }
+    .section-title { padding: 8px 20px 12px; font-size: 0.875rem; color: var(--text-secondary); }
+    .state-center { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; }
+    .state-center .icon-wrap { width: 92px; height: 92px; border-radius: 50%; background: var(--card-glass); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; box-shadow: 0 8px 18px var(--shadow-coral); }
+    .state-center .icon-wrap .ico { font-size: 34px; color: var(--coral); }
+    .state-center h3 { font-size: 1rem; margin-bottom: 6px; color: var(--text); }
+    .state-center p { font-size: 0.875rem; color: var(--text-secondary); }
+    .state-center .spinner { width: 24px; height: 24px; border: 2px solid var(--card-glass); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.8s linear infinite; margin-top: 8px; }
+    .state-center .error-msg { color: var(--text-secondary); max-width: 280px; margin-bottom: 12px; }
+    .state-center .retry-btn { padding: 10px 20px; background: var(--coral); color: #fff; border: none; border-radius: 12px; font-size: 0.9375rem; cursor: pointer; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .flow { padding: 0 20px; }
+    .card-large {
+      background: var(--card-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 20px var(--shadow-coral);
+      margin-bottom: 16px;
+    }
+    .card-large .img, .card-small .img { display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .card-large .img { height: 180px; }
+    .card-small .img { height: 120px; }
+    .card-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, rgba(126,200,227,0.45), rgba(243,229,171,0.55)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-secondary); }
+    .card-placeholder .paw { font-size: 2rem; color: var(--coral); opacity: 0.85; }
+    .card-placeholder span { font-size: 0.75rem; font-weight: 500; }
+    .card-large .img img, .card-small .img img { width: 100%; height: 100%; object-fit: cover; }
+    .card-large .title { padding: 12px 16px; font-weight: 600; font-size: 1rem; }
+    .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .card-small {
+      background: var(--card-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 20px var(--shadow-coral);
+    }
+    .card-small .img { height: 120px; }
+    .card-small .title { padding: 10px 12px; font-weight: 500; font-size: 0.875rem; }
+    .detail { display: none; padding: 56px 0 40px; background: #fafafb; min-height: 100vh; }
+    .detail.show { display: block; }
+    .detail-topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px 6px; background: rgba(250,250,251,0.96); position: fixed; top: 0; left: 0; right: 0; z-index: 20; }
+    .detail-topbar .back { position: static; font-size: 1.25rem; color: var(--text); cursor: pointer; padding: 8px; }
+    .detail-topbar .title { font-size: 17px; font-weight: 600; color: var(--text); flex: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 8px; }
+    .detail-topbar .place { width: 34px; height: 34px; }
+    .back { position: fixed; top: 12px; left: 8px; z-index: 20; font-size: 1.25rem; color: var(--text); cursor: pointer; padding: 8px; }
+    .detail .scroll-wrap { padding: 18px 20px 32px; }
+    .detail .hero { height: 240px; border-radius: 26px; margin-bottom: 20px; margin-left: 24px; margin-right: 24px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .detail .hero img { width: 100%; height: 100%; object-fit: cover; }
+    .detail .hero .card-placeholder { border-radius: 26px; }
+    .detail .subtitle { margin-bottom: 20px; color: var(--text-secondary); padding: 0 4px; }
+    .block { background: rgba(255,255,255,0.92); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.03); }
+    .block h3 { margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); }
+    .block ul { padding-left: 1rem; color: var(--text-secondary); font-size: 0.875rem; }
+    .block .ing-item, .block .step-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 1rem; }
+    .block .ing-item .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--coral); opacity: 0.75; margin-top: 8px; flex-shrink: 0; }
+    .block .step-item .num { color: var(--coral); font-weight: 600; width: 24px; text-align: left; flex-shrink: 0; }
+    .block.steps { list-style: none; padding-left: 20px; }
+    .block.steps .step-item { padding-left: 0; }
+    .block.ai { background: rgb(248,242,214); }
+    .block.ai .ai-header { font-size: 1rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
+    .block.ai .ai-note, .block.ai .ai-weight { font-size: 1rem; color: var(--text); line-height: 1.5; }
+    .block.ai .ai-weight { color: var(--text-secondary); margin-top: 8px; }
+    .manage { display: none; padding: 56px 20px 40px; background: var(--bg); min-height: 100vh; }
+    .manage.show { display: block; }
+    .manage-topbar { display: flex; align-items: center; padding: 10px 18px 6px; background: rgba(247,249,252,0.96); position: fixed; top: 0; left: 0; right: 0; z-index: 20; }
+    .manage-topbar .back { position: static; }
+    .manage .content { padding-top: 18px; }
+    .manage .block { margin-bottom: 24px; background: var(--card-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius); box-shadow: 0 4px 20px var(--shadow-coral); }
+    .manage .row { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--card-glass); backdrop-filter: blur(20px); border-radius: var(--radius); margin-bottom: 12px; cursor: pointer; box-shadow: 0 4px 20px var(--shadow-coral); }
+    .manage .row .icon { font-size: 1.25rem; color: var(--coral); flex-shrink: 0; }
+    .manage .row .label { flex: 1; }
+    .manage .row .label strong { display: block; margin-bottom: 4px; }
+    .manage .row .label small { color: var(--text-secondary); font-size: 0.875rem; }
+    .manage .row .chevron { color: var(--text-secondary); font-size: 1.25rem; }
+    .manage .forbidden-card .head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .manage .forbidden-card .head .icon { color: #d95959; font-size: 1.125rem; }
+    .manage .forbidden-card .head h3 { margin: 0; font-size: 1rem; }
+    .manage .forbidden-list { padding: 16px; background: var(--bg); border-radius: 16px; font-size: 0.875rem; color: var(--text-secondary); }
+    .manage .forbidden-list .item { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+    .manage .forbidden-list .item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .manage .forbidden-list .item .dot.fatal { background: #d95959; }
+    .manage .forbidden-list .item .dot.risk { background: #f2c04a; }
+    .manage .forbidden-list .tip { margin-top: 8px; font-size: 0.75rem; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- 首页（与 iOS HomeView 一致） -->
+  <div id="home">
+    <header class="header">
+      <h1>猫咪漂亮饭</h1>
+      <div class="search-wrap" id="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="搜索食品名称、食材或做法" autocomplete="off" />
+        <span class="clear-btn" id="search-clear" title="清除">✕</span>
+      </div>
+    </header>
+    <span class="profile-btn" onclick="showManage()" title="我的">👤</span>
+    <div class="tabs">
+      <span class="tab active" data-cat="all">🍃 全部</span>
+      <span class="tab" data-cat="cold">❄️ 冷饮</span>
+      <span class="tab" data-cat="mousse">🔷 慕斯</span>
+      <span class="tab" data-cat="cake">🎂 蛋糕</span>
+    </div>
+    <p class="section-title" id="section-header">🌟 属于【我的猫】的午后治愈灵感</p>
+    <div class="flow" id="recipe-flow">
+      <div id="loading-state" class="state-center">
+        <div class="icon-wrap"><span class="ico">🐾</span></div>
+        <h3>正在加载猫咪漂亮饭</h3>
+        <p>小猫爪正在把新鲜食谱端上来</p>
+        <div class="spinner"></div>
+      </div>
+      <div id="empty-state" class="state-center hidden">
+        <div class="icon-wrap"><span class="ico">🐾</span></div>
+        <h3>暂时还没有可展示的食谱</h3>
+        <p>请稍后再试，或检查后端接口是否正常返回数据。</p>
+      </div>
+      <div id="search-empty-state" class="state-center hidden">
+        <div class="icon-wrap"><span class="ico">🔍</span></div>
+        <h3>没有找到相关漂亮饭</h3>
+        <p>试试搜索菜名、食材名称，或切换上方分类。</p>
+      </div>
+      <div id="error-state" class="state-center hidden">
+        <div class="icon-wrap"><span class="ico">⚠️</span></div>
+        <h3>无法加载食谱</h3>
+        <p id="error-message" class="error-msg">请检查后端是否已启动（默认 127.0.0.1:8000）。</p>
+        <button type="button" class="retry-btn" onclick="loadRecipes()">重试</button>
+      </div>
+      <div id="recipe-grid" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- 详情页（与 iOS DetailView 一致） -->
+  <div id="detail" class="detail">
+    <div class="detail-topbar">
+      <span class="back" onclick="showHome()">←</span>
+      <span class="title" id="detail-title"></span>
+      <span class="place"></span>
+    </div>
+    <div class="scroll-wrap">
+      <div class="hero" id="detail-hero"></div>
+      <p class="subtitle" id="detail-subtitle"></p>
+      <div class="block">
+        <h3>🛒 极简食材 (一餐份)</h3>
+        <div id="detail-ingredients"></div>
+      </div>
+      <div class="block steps">
+        <h3>👤 3步变身</h3>
+        <div id="detail-steps"></div>
+      </div>
+      <div class="block ai" id="detail-ai-block">
+        <p class="ai-header" id="detail-ai-header"></p>
+        <p class="ai-note" id="detail-ai"></p>
+        <p class="ai-weight" id="detail-ai-weight"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 管理中心（与 iOS ManagementView 一致） -->
+  <div id="manage" class="manage">
+    <div class="manage-topbar">
+      <span class="back" onclick="showHome()">←</span>
+    </div>
+    <div class="content" style="padding: 0 20px;">
+      <div class="row" onclick="showProfileEdit()">
+        <span class="icon">🐈</span>
+        <div class="label">
+          <strong>猫咪档案</strong>
+          <small id="manage-cat-summary">点击设置</small>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div id="profile-edit" class="block" style="display:none;">
+        <h3>编辑档案</h3>
+        <p style="margin-bottom:8px;"><label>名字 <input type="text" id="profile-name" placeholder="如：大黄" style="margin-left:8px;padding:6px 10px;border-radius:8px;border:1px solid #ddd;"></label></p>
+        <p style="margin-bottom:8px;"><label>品种 <select id="profile-breed" style="margin-left:8px;padding:6px 10px;border-radius:8px;border:1px solid #ddd;"><option value="">请选择</option></select></label></p>
+        <p style="margin-bottom:8px;"><label>性别 <select id="profile-gender" style="margin-left:8px;padding:6px 10px;border-radius:8px;border:1px solid #ddd;"><option value="未知">未知</option><option value="公">公</option><option value="母">母</option></select></label></p>
+        <p style="margin-bottom:8px;"><label>是否绝育 <select id="profile-sterilization" style="margin-left:8px;padding:6px 10px;border-radius:8px;border:1px solid #ddd;"><option value="未知">未知</option><option value="已绝育">已绝育</option><option value="未绝育">未绝育</option></select></label></p>
+        <p style="margin-bottom:8px;"><label>体重(kg) <input type="number" id="profile-weight" min="0.5" max="20" step="0.1" placeholder="如：5" style="margin-left:8px;padding:6px 10px;border-radius:8px;border:1px solid #ddd;"></label></p>
+        <p style="margin-bottom:8px;"><label>出生日期 <input type="date" id="profile-birthdate" style="margin-left:8px;padding:6px 10px;border-radius:8px;border:1px solid #ddd;"></label></p>
+        <button onclick="saveProfile()" style="padding:8px 16px;background:var(--coral);color:#fff;border:none;border-radius:8px;cursor:pointer;">完成</button>
+      </div>
+      <div class="block forbidden-card">
+        <div class="head">
+          <span class="icon">⚠️</span>
+          <h3>禁忌清单：铲屎官安全红线</h3>
+        </div>
+        <div class="forbidden-list" id="forbidden-list">
+          <div class="item"><span class="dot fatal"></span><span>致命类：洋葱、巧克力、葡萄</span></div>
+          <div class="item"><span class="dot risk"></span><span>风险类：牛奶、生蛋白、高盐</span></div>
+        </div>
+        <p class="tip">💡 提示：此清单由 AI 每日审计更新</p>
+      </div>
+      <div class="row" onclick="alert('Web 预览暂不支持账户设置')">
+        <span class="icon">⚙️</span>
+        <div class="label"><strong>账户设置</strong></div>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 后端地址：URL 带 ?api=http://xxx:8000 则用该地址；否则本机访问用 127.0.0.1，局域网别人打开时用当前主机+8000
+    var API_BASE = (function () {
+      var m = /[?&]api=([^&]+)/.exec(location.search);
+      if (m) try { return decodeURIComponent(m[1]).replace(/\/$/, ''); } catch (e) {}
+      var host = location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') return 'http://127.0.0.1:8000';
+      return location.protocol + '//' + host + ':8000';
+    })();
+    var recipes = [];
+    var currentCategory = 'all';
+    var searchText = '';
+    var selectedRecipe = null;
+    var isLoadingRecipes = true;
+    var apiErrorMessage = '';
+    var catProfile = (function () {
+      try {
+        var s = localStorage.getItem('moechef_cat_profile');
+        if (s) {
+          var p = JSON.parse(s);
+          if (p && (p.name || p.breed || p.bodyWeight != null || p.birthDate || p.gender || p.sterilization)) {
+            return {
+              name: p.name || '',
+              breed: p.breed || '',
+              bodyWeight: typeof p.bodyWeight === 'number' && p.bodyWeight > 0 ? p.bodyWeight : (parseFloat(p.bodyWeight) || 0),
+              birthDate: p.birthDate || '',
+              gender: p.gender || '未知',
+              sterilization: p.sterilization || '未知'
+            };
+          }
+        }
+      } catch (e) {}
+      return { name: '大黄', breed: '英短', bodyWeight: 5, birthDate: '', gender: '未知', sterilization: '未知' };
+    })();
+    var COMMON_BREEDS = ['中华田园猫','英国短毛猫','美国短毛猫','布偶猫','苏格兰折耳猫','波斯猫','暹罗猫','缅因猫','挪威森林猫','孟加拉猫','阿比西尼亚猫','俄罗斯蓝猫','土耳其安哥拉猫','缅甸猫','东方短毛猫','日本短尾猫','斯芬克斯猫（无毛猫）','德文卷毛猫','柯尼斯卷毛猫','其他'];
+    function formatBirthDateDisplay(isoDate) {
+      if (!isoDate) return '';
+      var parts = String(isoDate).split('-');
+      if (parts.length >= 2) return parts[0] + '年' + parseInt(parts[1], 10) + '月';
+      return isoDate;
+    }
+    function getAiBreedHeaderText() {
+      var name = (catProfile.name || '').trim();
+      var breed = (catProfile.breed || '').trim();
+      if (name) return '💡 ' + name + '是【' + (breed || '未知品种') + '】，AI 建议：';
+      return '💡 未设置档案，AI 建议：';
+    }
+    // PRD 3.8：RER = 70 * weight^0.75，辅食上限 = RER * 10%
+    function rerKcalPerDay(kg) { return 70 * Math.pow(kg, 0.75); }
+    function derSnackKcal(rer, fraction) { fraction = fraction || 0.1; return rer * fraction; }
+    function getAiWeightAdviceText() {
+      var w = catProfile.bodyWeight;
+      if (w == null || w <= 0) return '';
+      var rer = rerKcalPerDay(w);
+      var der = Math.round(derSnackKcal(rer));
+      var grams = Math.max(1, Math.round(der / 1.5));
+      return '按当前体重，每天零食加餐建议在 ' + der + ' 大卡以内（约 ' + grams + ' 克熟鸡胸肉的热量），相当于一天所需能量的一成，不会影响正餐。';
+    }
+    function recipeMatchesSearch(recipe, q) {
+      if (!q || !q.trim()) return true;
+      var k = q.trim().toLowerCase();
+      var haystack = [
+        recipe.title || '',
+        recipe.subtitle || '',
+        (recipe.aiBreedNote || ''),
+        (recipe.ingredients || []).map(function(x) { return (x.name || x) + ' ' + (x.amount || ''); }).join(' '),
+        (recipe.steps || []).join(' ')
+      ].join(' ');
+      return haystack.toLowerCase().indexOf(k) !== -1;
+    }
+    function getVisibleRecipes() {
+      var list = recipes;
+      if (currentCategory && currentCategory !== 'all') {
+        list = list.filter(function(r) { return (r.category || '').toLowerCase() === currentCategory; });
+      }
+      if (searchText.trim()) {
+        list = list.filter(function(r) { return recipeMatchesSearch(r, searchText); });
+      }
+      return list;
+    }
+    function getSectionHeaderText() {
+      var q = searchText.trim();
+      if (q) return '🔎 "' + q + '" 的搜索结果';
+      var labels = { cold: '冷饮', mousse: '慕斯', cake: '蛋糕' };
+      if (currentCategory && currentCategory !== 'all' && labels[currentCategory]) {
+        return '✨ ' + labels[currentCategory] + ' 分类下的漂亮饭';
+      }
+      var catName = (catProfile.name || '').trim() || '我的猫';
+      return '🌟 属于【' + catName + '】的午后治愈灵感';
+    }
+
+    function showHome() {
+      document.getElementById('home').classList.remove('hidden');
+      document.getElementById('detail').classList.remove('show');
+      document.getElementById('manage').classList.remove('show');
+    }
+    function placeholderHtml() {
+      return '<div class="card-placeholder"><span class="paw">🐾</span><span>暂无封面</span></div>';
+    }
+    function setDetail(recipe) {
+      selectedRecipe = recipe;
+      if (recipe) {
+        document.getElementById('detail-title').textContent = recipe.title || '';
+        var hero = document.getElementById('detail-hero');
+        var url = recipe.imageURL ? (recipe.imageURL.indexOf('http') === 0 ? recipe.imageURL : (API_BASE + (recipe.imageURL.indexOf('/') === 0 ? recipe.imageURL : '/' + recipe.imageURL))) : '';
+        if (url) {
+          hero.innerHTML = '<img src="' + url.replace(/"/g, '&quot;') + '" alt="">';
+        } else {
+          hero.innerHTML = placeholderHtml();
+        }
+        document.getElementById('detail-subtitle').textContent = recipe.subtitle || '';
+        var ing = recipe.ingredients || [];
+        var ingHtml = (Array.isArray(ing) ? ing : []).map(function (x) {
+          var name = (typeof x === 'object' && x.name) ? x.name : x;
+          var amount = (typeof x === 'object' && x.amount != null) ? x.amount : '';
+          return '<div class="ing-item"><span class="dot"></span><span>' + name + (amount ? ': ' + amount : '') + '</span></div>';
+        }).join('') || '<div class="ing-item"><span class="dot"></span><span>—</span></div>';
+        document.getElementById('detail-ingredients').innerHTML = ingHtml;
+        var steps = recipe.steps || [];
+        var stepsHtml = steps.map(function (s, i) {
+          return '<div class="step-item"><span class="num">' + (i + 1) + '.</span><span>' + s + '</span></div>';
+        }).join('') || '<div class="step-item"><span class="num">1.</span><span>—</span></div>';
+        document.getElementById('detail-steps').innerHTML = stepsHtml;
+        var hasAi = (recipe.aiBreedNote && recipe.aiBreedNote.trim()) || getAiWeightAdviceText();
+        document.getElementById('detail-ai-block').style.display = hasAi ? '' : 'none';
+        document.getElementById('detail-ai-header').textContent = getAiBreedHeaderText();
+        document.getElementById('detail-ai').textContent = recipe.aiBreedNote || '';
+        var weightLine = getAiWeightAdviceText();
+        document.getElementById('detail-ai-weight').textContent = weightLine;
+        document.getElementById('detail-ai-weight').style.display = weightLine ? '' : 'none';
+      }
+    }
+    function showDetail(recipe) {
+      setDetail(recipe);
+      document.getElementById('home').classList.add('hidden');
+      document.getElementById('detail').classList.add('show');
+      document.getElementById('manage').classList.remove('show');
+    }
+    function showManage() {
+      document.getElementById('home').classList.add('hidden');
+      document.getElementById('detail').classList.remove('show');
+      document.getElementById('manage').classList.add('show');
+      updateManageCatSummary();
+    }
+    function showProfileEdit() {
+      var el = document.getElementById('profile-edit');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      if (el.style.display === 'block') {
+        document.getElementById('profile-name').value = catProfile.name || '';
+        var breedSel = document.getElementById('profile-breed');
+        if (breedSel.options.length <= 1) {
+          breedSel.innerHTML = '<option value="">请选择</option>';
+          COMMON_BREEDS.forEach(function(b) { breedSel.appendChild(new Option(b, b)); });
+        }
+        breedSel.value = catProfile.breed || '';
+        document.getElementById('profile-gender').value = catProfile.gender || '未知';
+        document.getElementById('profile-sterilization').value = catProfile.sterilization || '未知';
+        document.getElementById('profile-weight').value = catProfile.bodyWeight > 0 ? catProfile.bodyWeight : '';
+        document.getElementById('profile-birthdate').value = catProfile.birthDate || '';
+      }
+    }
+    function saveProfile() {
+      catProfile.name = (document.getElementById('profile-name').value || '').trim();
+      catProfile.breed = (document.getElementById('profile-breed').value || '').trim();
+      catProfile.gender = document.getElementById('profile-gender').value || '未知';
+      catProfile.sterilization = document.getElementById('profile-sterilization').value || '未知';
+      var w = parseFloat(document.getElementById('profile-weight').value);
+      catProfile.bodyWeight = (w > 0 && w <= 20) ? w : 0;
+      catProfile.birthDate = (document.getElementById('profile-birthdate').value || '').trim();
+      try { localStorage.setItem('moechef_cat_profile', JSON.stringify(catProfile)); } catch (e) {}
+      document.getElementById('profile-edit').style.display = 'none';
+      updateManageCatSummary();
+    }
+    function updateManageCatSummary() {
+      var summary = document.getElementById('manage-cat-summary');
+      if ((catProfile.name || '').trim()) {
+        var parts = [catProfile.name, (catProfile.breed || '未知品种'), (catProfile.gender || ''), (catProfile.sterilization || '')].filter(Boolean);
+        if (catProfile.birthDate) parts.push('生于 ' + formatBirthDateDisplay(catProfile.birthDate));
+        summary.textContent = parts.join(' · ');
+      } else summary.textContent = '点击设置';
+    }
+
+    function cardImgHtml(url) {
+      if (url) {
+        var full = url.indexOf('http') === 0 ? url : (API_BASE + (url.indexOf('/') === 0 ? url : '/' + url));
+        return '<img src="' + full.replace(/"/g, '&quot;') + '" alt="">';
+      }
+      return placeholderHtml();
+    }
+    function renderFlow() {
+      var loadingEl = document.getElementById('loading-state');
+      var emptyEl = document.getElementById('empty-state');
+      var searchEmptyEl = document.getElementById('search-empty-state');
+      var errorEl = document.getElementById('error-state');
+      var gridEl = document.getElementById('recipe-grid');
+      var list = getVisibleRecipes();
+      document.getElementById('section-header').textContent = getSectionHeaderText();
+
+      if (isLoadingRecipes && recipes.length === 0) {
+        loadingEl.classList.remove('hidden');
+        emptyEl.classList.add('hidden');
+        searchEmptyEl.classList.add('hidden');
+        errorEl.classList.add('hidden');
+        gridEl.classList.add('hidden');
+        return;
+      }
+      loadingEl.classList.add('hidden');
+      if (apiErrorMessage && recipes.length === 0) {
+        errorEl.classList.remove('hidden');
+        document.getElementById('error-message').textContent = apiErrorMessage;
+        emptyEl.classList.add('hidden');
+        searchEmptyEl.classList.add('hidden');
+        gridEl.classList.add('hidden');
+        return;
+      }
+      errorEl.classList.add('hidden');
+      if (recipes.length === 0) {
+        emptyEl.classList.remove('hidden');
+        searchEmptyEl.classList.add('hidden');
+        gridEl.classList.add('hidden');
+        return;
+      }
+      if (list.length === 0) {
+        emptyEl.classList.add('hidden');
+        searchEmptyEl.classList.remove('hidden');
+        gridEl.classList.add('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+      searchEmptyEl.classList.add('hidden');
+      gridEl.classList.remove('hidden');
+      var first = list[0];
+      var rest = list.slice(1);
+      var html = '<div class="card-large" data-idx="0"><div class="img">' + cardImgHtml(first.imageURL) + '</div><div class="title">' + (first.title || '') + '</div></div>';
+      if (rest.length) {
+        html += '<div class="card-row">';
+        rest.forEach(function (r, i) {
+          html += '<div class="card-small" data-idx="' + (i + 1) + '"><div class="img">' + cardImgHtml(r.imageURL) + '</div><div class="title">' + (r.title || '') + '</div></div>';
+        });
+        html += '</div>';
+      }
+      gridEl.innerHTML = html;
+      gridEl.querySelectorAll('.card-large, .card-small').forEach(function (el) {
+        var idx = parseInt(el.getAttribute('data-idx'), 10);
+        var item = list[idx];
+        if (item) el.onclick = function () { showDetail(item); };
+      });
+    }
+    function bindTabs() {
+      document.querySelectorAll('.tab').forEach(function (tab) {
+        tab.onclick = function () {
+          document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+          currentCategory = tab.getAttribute('data-cat') || 'all';
+          renderFlow();
+        };
+      });
+    }
+    function loadForbidden() {
+      fetch(API_BASE + '/api/forbidden')
+        .then(function(res) {
+          if (!res.ok) return Promise.reject(new Error(res.statusText));
+          return res.json();
+        })
+        .then(function(data) {
+          var raw = data.items || data.list || [];
+          var items = raw.map(function(x) {
+            var level = (x.level || x.category || '').toString().toLowerCase();
+            var name = (x.name || '').toString();
+            return { level: level, name: name };
+          });
+          if (items.length) {
+            var listEl = document.getElementById('forbidden-list');
+            listEl.innerHTML = items.map(function(x) {
+              var level = (x.level === 'fatal' || x.level === '致命类') ? 'fatal' : 'risk';
+              var label = level === 'fatal' ? '致命类' : '风险类';
+              return '<div class="item"><span class="dot ' + level + '"></span><span>' + label + '：' + (x.name || '') + '</span></div>';
+            }).join('') + '<p class="tip">💡 提示：此清单由 AI 每日审计更新</p>';
+          }
+        })
+        .catch(function() { /* 失败时保留页面默认占位 */ });
+    }
+    function loadRecipes() {
+      apiErrorMessage = '';
+      isLoadingRecipes = true;
+      renderFlow();
+      fetch(API_BASE + '/api/recipes')
+        .then(function(res) {
+          if (!res.ok) {
+            return res.json().then(function(body) {
+              var msg = (body && body.detail) ? (typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail)) : res.status + ' ' + res.statusText;
+              throw new Error(msg);
+            }).catch(function(e) {
+              if (e instanceof Error && e.message && e.message.indexOf('{') !== 0) throw e;
+              throw new Error(res.status + ' ' + res.statusText);
+            });
+          }
+          return res.json();
+        })
+        .then(function(data) {
+          var raw = data.items != null ? data.items : (data.recipes || []);
+          var list = Array.isArray(raw) ? raw : [];
+          recipes = list.map(function(r) {
+            return {
+              id: r.id,
+              title: r.title,
+              subtitle: r.subtitle,
+              category: r.category || r.category_name,
+              imageURL: r.imageURL != null ? r.imageURL : r.image_url,
+              ingredients: r.ingredients || [],
+              steps: r.steps || [],
+              aiBreedNote: r.aiBreedNote != null ? r.aiBreedNote : r.ai_breed_note,
+              safetyPassed: r.safetyPassed != null ? r.safetyPassed : r.safety_passed
+            };
+          });
+          isLoadingRecipes = false;
+          apiErrorMessage = '';
+          currentCategory = 'all';
+          document.querySelectorAll('.tab').forEach(function(t) {
+            t.classList.toggle('active', t.getAttribute('data-cat') === 'all');
+          });
+          renderFlow();
+          loadForbidden();
+        })
+        .catch(function(err) {
+          isLoadingRecipes = false;
+          apiErrorMessage = (err && err.message) ? err.message : ('无法连接 ' + API_BASE + '，请确认后端已启动（如 cd backend && uvicorn app.main:app --reload）');
+          renderFlow();
+        });
+    }
+    (function initSearch() {
+      var wrap = document.getElementById('search-wrap');
+      var input = document.getElementById('search-input');
+      var clear = document.getElementById('search-clear');
+      function update() {
+        searchText = input.value;
+        wrap.classList.toggle('has-text', searchText.length > 0);
+        renderFlow();
+      }
+      input.addEventListener('input', update);
+      input.addEventListener('keyup', update);
+      clear.onclick = function() { input.value = ''; update(); };
+    })();
+    bindTabs();
+    loadRecipes();
+    updateManageCatSummary();
+  </script>
+</body>
+</html>
