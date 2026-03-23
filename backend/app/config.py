@@ -70,6 +70,12 @@ class Settings:
         return _env("DOUBAO_IMAGE_MODEL") or "doubao-seedream-4-0-250828"
 
     @property
+    def use_llm_cover_prompt(self) -> bool:
+        """为 true 时封面图提示词优先用豆包文本模型生成，更准确；否则用规则拼接。"""
+        v = (_env("USE_LLM_COVER_PROMPT") or "").strip().lower()
+        return v in ("1", "true", "yes")
+
+    @property
     def api_base_url(self) -> str:
         """后端 API 根地址，用于生成图片等静态资源的完整 URL"""
         return _env("API_BASE_URL") or "http://127.0.0.1:8000"
@@ -84,6 +90,11 @@ class Settings:
     def supabase_anon_key(self) -> str | None:
         """Supabase anon/publishable key"""
         return _env("SUPABASE_ANON_KEY")
+
+    @property
+    def supabase_service_role_key(self) -> str | None:
+        """Supabase service_role key，仅用于后端上传 Storage 以绕过 RLS。严禁暴露到前端。"""
+        return _env("SUPABASE_SERVICE_ROLE_KEY")
 
     @property
     def supabase_storage_bucket(self) -> str:

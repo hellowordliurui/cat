@@ -140,10 +140,6 @@ struct ManagementView: View {
                             .foregroundStyle(Theme.Colors.textSecondary)
                     }
                 }
-                Text("💡 提示：此清单由 AI 每日审计更新")
-                    .font(.caption)
-                    .foregroundStyle(Theme.Colors.textSecondary.opacity(0.9))
-                    .padding(.top, 4)
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)

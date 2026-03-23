@@ -15,14 +15,6 @@ struct HomeView: View {
     @State private var selectedCategory: RecipeCategory = .all
     @State private var searchText = ""
     
-    var visibleRecipes: [Recipe] {
-        recipes.filter { recipe in
-            let matchesCategory = selectedCategory == .all || recipe.category == selectedCategory
-            let matchesSearch = normalizedSearchText.isEmpty || recipe.matches(searchText)
-            return matchesCategory && matchesSearch
-        }
-    }
-
     private var normalizedSearchText: String {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -38,20 +30,13 @@ struct HomeView: View {
                     VStack(spacing: 0) {
                         // 分类 Tab（固定，不随内容滚动）
                         categoryTabs
-                        ScrollView {
-                            VStack(spacing: 0) {
-                                // 标题
-                                sectionHeader
-                                if visibleRecipes.isEmpty {
-                                    searchEmptyStateView
-                                } else {
-                                    // 瀑布流卡片
-                                    waterfallGrid(recipes: visibleRecipes)
-                                }
+                        // 每个分类单独 ScrollView，切换 Tab 只换可见层，保留各自滚动位置
+                        ZStack {
+                            ForEach(RecipeCategory.allCases) { tabCategory in
+                                categoryScrollPage(for: tabCategory)
                             }
-                            .padding(.top, 8)
-                            .padding(.bottom, 32)
                         }
+                        .animation(nil, value: selectedCategory)
                     }
                 }
             }
@@ -131,9 +116,7 @@ struct HomeView: View {
                         category: category,
                         isSelected: selectedCategory == category
                     ) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            selectedCategory = category
-                        }
+                        selectedCategory = category
                     }
                 }
             }
@@ -214,13 +197,41 @@ struct HomeView: View {
         .padding(.horizontal, 24)
     }
     
-    private var sectionHeader: some View {
+    private func filteredRecipes(for tabCategory: RecipeCategory) -> [Recipe] {
+        recipes.filter { recipe in
+            let matchesCategory = tabCategory == .all || recipe.category == tabCategory
+            let matchesSearch = normalizedSearchText.isEmpty || recipe.matches(searchText)
+            return matchesCategory && matchesSearch
+        }
+    }
+
+    @ViewBuilder
+    private func categoryScrollPage(for tabCategory: RecipeCategory) -> some View {
+        let list = filteredRecipes(for: tabCategory)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                sectionHeader(for: tabCategory)
+                if list.isEmpty {
+                    searchEmptyStateView
+                } else {
+                    waterfallGrid(recipes: list)
+                }
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 32)
+        }
+        .opacity(selectedCategory == tabCategory ? 1 : 0)
+        .allowsHitTesting(selectedCategory == tabCategory)
+        .accessibilityHidden(selectedCategory != tabCategory)
+    }
+
+    private func sectionHeader(for tabCategory: RecipeCategory) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             let title: String = {
                 if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     return "🔎 \"\(searchText)\" 的搜索结果"
-                } else if selectedCategory != .all {
-                    return "✨ \(selectedCategory.rawValue) 分类下的漂亮饭"
+                } else if tabCategory != .all {
+                    return "✨ \(tabCategory.rawValue) 分类下的漂亮饭"
                 } else {
                     return "🌟 属于【\(currentCatName ?? "我的猫")】的午后治愈灵感"
                 }
@@ -328,6 +339,7 @@ private struct CategoryChip: View {
             }
             .foregroundStyle(isSelected ? .white : Theme.Colors.text)
             .clipShape(Capsule())
+            .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
         .buttonStyle(.plain)
     }

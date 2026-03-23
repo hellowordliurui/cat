@@ -63,10 +63,17 @@ async def db_view():
         f'<tr><td>{x.get("id","")}</td><td>{x.get("name","")}</td><td>{x.get("level","")}</td></tr>'
         for x in forbidden_items
     )
-    rows_r = "".join(
-        f'<tr><td>{x.get("id","")}</td><td>{x.get("title","")}</td><td>{x.get("category","")}</td></tr>'
-        for x in recipe_items
-    )
+    def _recipe_row(r):
+        img_url = r.get("imageURL") or r.get("image_url") or ""
+        img_cell = (
+            f'<td><a href="{img_url}" target="_blank" rel="noopener">'
+            f'<img src="{img_url}" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:8px;display:block;" '
+            f'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';" />'
+            f'<span style="display:none;font-size:12px;color:#999;">无图</span></a></td>'
+        ) if img_url else '<td style="color:#999;">无图</td>'
+        return f'<tr><td>{r.get("id","")}</td>{img_cell}<td>{r.get("title","")}</td><td>{r.get("category","")}</td></tr>'
+
+    rows_r = "".join(_recipe_row(x) for x in recipe_items)
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"/><title>MoeChef 数据视图</title>
@@ -74,19 +81,20 @@ async def db_view():
   body {{ font-family: system-ui; padding: 20px; background: #f7f9fc; }}
   h1 {{ color: #333; }}
   h2 {{ color: #ff7e5f; margin-top: 24px; }}
-  table {{ border-collapse: collapse; width: 100%; max-width: 800px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.06); }}
+  table {{ border-collapse: collapse; width: 100%; max-width: 900px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.06); }}
   th, td {{ padding: 12px 16px; text-align: left; border-bottom: 1px solid #eee; }}
   th {{ background: #ff7e5f; color: #fff; }}
+  td img {{ vertical-align: middle; }}
   p.meta {{ color: #666; font-size: 14px; }}
 </style>
 </head>
 <body>
   <h1>📊 MoeChef 当前数据</h1>
-  <p class="meta">后端内存/PostgreSQL（或 mock）。刷新本页即最新。</p>
+  <p class="meta">后端内存/PostgreSQL（或 mock）。刷新本页即最新。食谱封面为库中最新 imageURL。</p>
   <h2>🚫 禁忌清单 (forbidden_items)</h2>
   <table><thead><tr><th>id</th><th>name</th><th>level</th></tr></thead><tbody>{rows_f}</tbody></table>
-  <h2>📖 食谱 (recipes)</h2>
-  <table><thead><tr><th>id</th><th>title</th><th>category</th></tr></thead><tbody>{rows_r}</tbody></table>
+  <h2>📖 食谱 (recipes) — 封面图</h2>
+  <table><thead><tr><th>id</th><th>封面</th><th>title</th><th>category</th></tr></thead><tbody>{rows_r}</tbody></table>
 </body>
 </html>"""
     return HTMLResponse(html)

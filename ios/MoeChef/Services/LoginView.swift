@@ -22,7 +22,7 @@ struct LoginView: View {
 
                 // 标题与副标题
                 VStack(spacing: 12) {
-                    Text("Moe Chef")
+                    Text("喵食记")
                         .font(.largeTitle.weight(.semibold))
                         .foregroundStyle(Theme.Colors.text)
                     Text("用 AI 过滤风险，用美学治愈生活")
@@ -50,18 +50,6 @@ struct LoginView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
-
-#if DEBUG
-                Button {
-                    AuthService.shared.devLogin()
-                } label: {
-                    Text("跳过登录（开发模式）")
-                        .font(.footnote)
-                        .foregroundStyle(Theme.Colors.textSecondary)
-                        .underline()
-                }
-                .padding(.top, 4)
-#endif
 
                 Spacer()
                     .frame(height: 48)

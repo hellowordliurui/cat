@@ -9,10 +9,14 @@ import json
 import logging
 import re
 import ssl
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Any
+
+# 后端启动时生成一次，用于破坏 App/CDN 缓存；重启后端即新版本，App 会拉新图
+_IMAGE_URL_VERSION = str(int(time.time()))
 
 from app.config import settings
 
@@ -136,13 +140,23 @@ async def get_recipes_from_postgres(category: str | None = None) -> list[dict[st
         _last_recipe_db_error = None
         if not rows:
             return []
+        def _image_url_with_cache_bust(raw: str | None) -> str | None:
+            """给封面图 URL 追加 ?v=<启动时版本> 破坏 App 端缓存；重启后端即新 v，必拉新图。"""
+            if raw is None:
+                return None
+            s = str(raw).strip()
+            if not s:
+                return None
+            sep = "&" if "?" in s else "?"
+            return f"{s}{sep}v={_IMAGE_URL_VERSION}"
+
         return [
             {
                 "id": str(r["id"]),
                 "title": r["title"],
                 "subtitle": r.get("subtitle") or "",
                 "category": r.get("category") or "all",
-                "imageURL": r.get("image_url"),
+                "imageURL": _image_url_with_cache_bust(r.get("image_url")),
                 "ingredients": r.get("ingredients") or [],
                 "steps": r.get("steps") or [],
                 "aiBreedNote": r.get("ai_breed_note"),

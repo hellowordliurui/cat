@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <title>喵食记 App 图标导出</title>
+  <style>
+    body { font-family: system-ui; padding: 24px; background: #f0f0f0; }
+    h1 { font-size: 1.25rem; margin-bottom: 8px; }
+    p { color: #666; margin-bottom: 16px; }
+    .preview { background: #fff; padding: 24px; border-radius: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+    button { margin-top: 16px; padding: 12px 24px; background: #FF7E5F; color: #fff; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <h1>喵食记 App 图标</h1>
+  <p>下方为 1024×1024 预览，点击按钮下载 PNG 后拖入 Xcode → Assets.xcassets → AppIcon.appiconset。</p>
+  <div class="preview">
+    <img id="img" src="miaoshiji-app-icon.svg" width="256" height="256" alt="App Icon"/>
+  </div>
+  <br/>
+  <button id="btn">下载 1024×1024 PNG</button>
+
+  <script>
+    document.getElementById('btn').onclick = function () {
+      var img = document.getElementById('img');
+      var c = document.createElement('canvas');
+      c.width = 1024;
+      c.height = 1024;
+      var ctx = c.getContext('2d');
+      img.onload = function () {
+        ctx.drawImage(img, 0, 0, 1024, 1024);
+        c.toBlob(function (blob) {
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'AppIcon-1024.png';
+          a.click();
+          URL.revokeObjectURL(a.href);
+        }, 'image/png');
+      };
+      img.crossOrigin = 'anonymous';
+      img.src = 'miaoshiji-app-icon.svg';
+      if (img.complete) img.onload();
+    };
+  </script>
+</body>
+</html>

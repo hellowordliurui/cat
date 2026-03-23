@@ -23,22 +23,28 @@ struct ContentView: View {
         Group {
             if state.showManagement {
                 ManagementView(onBack: { state.showManagement = false })
-            } else if let recipe = state.selectedRecipe {
-                DetailView(
-                    recipe: recipe,
-                    catName: catProfiles.first?.name,
-                    catBreed: catProfiles.first?.breed,
-                    catBodyWeightKg: catProfiles.first?.bodyWeight,
-                    onBack: { state.selectedRecipe = nil }
-                )
             } else {
-                HomeView(
-                    onProfileTap: { state.showManagement = true },
-                    onRecipeTap: { state.selectedRecipe = $0 },
-                    currentCatName: catProfiles.first?.name,
-                    recipes: state.recipes,
-                    isLoading: state.isLoadingRecipes
-                )
+                // 首页常驻底层，详情叠在上面，返回时不会重建 HomeView，从而保留滚动位置与搜索/分类状态
+                ZStack {
+                    HomeView(
+                        onProfileTap: { state.showManagement = true },
+                        onRecipeTap: { state.selectedRecipe = $0 },
+                        currentCatName: catProfiles.first?.name,
+                        recipes: state.recipes,
+                        isLoading: state.isLoadingRecipes
+                    )
+                    if let recipe = state.selectedRecipe {
+                        DetailView(
+                            recipe: recipe,
+                            catName: catProfiles.first?.name,
+                            catBreed: catProfiles.first?.breed,
+                            catBodyWeightKg: catProfiles.first?.bodyWeight,
+                            onBack: { state.selectedRecipe = nil }
+                        )
+                        .transition(.move(edge: .trailing))
+                        .zIndex(1)
+                    }
+                }
             }
         }
         .animation(.easeInOut(duration: 0.25), value: state.showManagement)

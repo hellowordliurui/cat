@@ -6,12 +6,14 @@
   ./.venv/bin/python -m scripts.backfill_recipe_covers_supabase --dry-run
   ./.venv/bin/python -m scripts.backfill_recipe_covers_supabase --limit 5
   ./.venv/bin/python -m scripts.backfill_recipe_covers_supabase --refresh-all
+  ./.venv/bin/python -m scripts.backfill_recipe_covers_supabase --refresh-all --title "白松露风味鸡丝浓汤"
 """
 from __future__ import annotations
 
 import argparse
 import asyncio
 import sys
+import time
 
 sys.path.insert(0, ".")
 
@@ -43,6 +45,12 @@ async def main() -> int:
         action="store_true",
         help="全部食谱都重生成封面（默认只处理缺少 imageURL 的）",
     )
+    parser.add_argument(
+        "--title",
+        type=str,
+        default="",
+        help="只处理标题包含该字符串的食谱，如 --title \"白松露\"；需配合 --refresh-all 使用",
+    )
     args = parser.parse_args()
 
     await init_postgres()
@@ -52,16 +60,25 @@ async def main() -> int:
         print("Supabase 中暂无食谱，或未配置 SUPABASE_URL/SUPABASE_ANON_KEY。")
         return 1
 
-    # 筛选：未传 --refresh-all 时只处理没有封面或封面为空的
-    if not args.refresh_all:
-        recipes = [
-            r
-            for r in recipes
-            if not (r.get("imageURL") and str(r.get("imageURL", "")).strip())
-        ]
-    if not recipes:
-        print("没有需要补图/重生成封面的食谱。")
-        return 0
+    # 按标题筛选：--title 时只处理包含该关键词的食谱（可单独重生成某一道）
+    if args.title and args.title.strip():
+        title_key = args.title.strip()
+        recipes = [r for r in recipes if title_key in (r.get("title") or "")]
+        if not recipes:
+            print(f"没有标题包含「{title_key}」的食谱。")
+            return 0
+        print(f"按标题筛选「{title_key}」，共 {len(recipes)} 条")
+    else:
+        # 未按标题筛选时：未传 --refresh-all 则只处理没有封面的
+        if not args.refresh_all:
+            recipes = [
+                r
+                for r in recipes
+                if not (r.get("imageURL") and str(r.get("imageURL", "")).strip())
+            ]
+        if not recipes:
+            print("没有需要补图/重生成封面的食谱。")
+            return 0
 
     if args.limit and args.limit > 0:
         recipes = recipes[: args.limit]
@@ -90,7 +107,10 @@ async def main() -> int:
             failed += 1
             continue
 
-        ok = update_recipe_image_url(rid, new_url)
+        # 追加 ?v=时间戳 破坏 App/CDN 缓存，使客户端拉取最新图
+        sep = "&" if "?" in new_url else "?"
+        url_with_cache_bust = f"{new_url}{sep}v={int(time.time())}"
+        ok = update_recipe_image_url(rid, url_with_cache_bust)
         if not ok:
             print(f"- 失败 {rid}: {title}（更新 Supabase 失败）")
             failed += 1
