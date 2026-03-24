@@ -1,9 +1,11 @@
 """
-Vercel 部署入口：在 Dashboard 中将 Root Directory 设为 `backend` 时，
-构建器会查找根目录下的 `main.py` 并导出名为 `app` 的 ASGI 应用。
+Vercel 入口（与官方示例一致）：在 Root Directory = backend 时，构建器优先识别
+「根目录 main.py」里导出的 ASGI 变量 `app`。
 
-本地开发仍推荐使用：
-  uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+应用逻辑仍在 app/main.py；此处仅转发，避免 Vercel 未命中 app/main.py 导致全站 NOT_FOUND。
+
+本地：uvicorn app.main:app --reload
+Vercel：识别本文件中的 app（与 app.main.app 为同一实例）
 """
 from __future__ import annotations
 

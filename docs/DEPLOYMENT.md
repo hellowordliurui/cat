@@ -62,15 +62,25 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ### 2.4 将 API 部署到 Vercel（Serverless）
 
-仓库已在 `backend/` 下提供 **`main.py`（根目录）**、`vercel.json`、`.python-version`，与 [Vercel FastAPI 说明](https://vercel.com/docs/frameworks/backend/fastapi) 对齐。
+Vercel 官方 [FastAPI 示例](https://github.com/vercel/vercel/tree/main/examples/fastapi) 使用 **`backend/main.py`（根目录）** 导出 ASGI `app`。本仓库在根目录 **`backend/main.py`** 中 `from app.main import app`，与本地 `uvicorn app.main:app` 为同一实例；另提供 **`pyproject.toml`** 便于构建器识别 Python 3.12 + 依赖。说明见 [FastAPI on Vercel](https://vercel.com/docs/frameworks/backend/fastapi)。
 
-1. **Vercel 控制台**：导入本 Git 仓库，在 **Project → Settings → General → Root Directory** 填 **`backend`**，保存后重新部署。
-2. **环境变量**：在 Vercel **Settings → Environment Variables** 中逐项添加与 `backend/.env.example` 对应的生产变量（至少 `SUPABASE_URL`、`SUPABASE_ANON_KEY`；封面入库需 Storage 时加 `SUPABASE_SERVICE_ROLE_KEY` 与桶配置）。
-3. **`API_BASE_URL`**：设为 Vercel 提供的正式域名（如 `https://xxx.vercel.app`），与生图/回写完整图片 URL 一致。
-4. **限制**：Vercel 实例**无持久磁盘**，`/static/generated` 不会在云端挂载；封面图须 **成功上传到 Supabase Storage**。生图、豆包等接口受 **Function 超时** 限制，若频繁 504 需缩短链路或改用常驻进程托管（见 2.2）。
-5. **验证**：部署成功后访问 **`/`** 应返回 JSON 引导；**`/docs`**、**`/health`**、**`/api/recipes`** 应可用。
+1. **必须：Root Directory**  
+   在 **Project → Settings → General → Root Directory** 填 **`backend`**（不要留仓库根目录）。否则 Vercel 找不到 `requirements.txt` 与 `app/main.py`，会出现全站 **[NOT_FOUND](https://vercel.com/docs/errors/NOT_FOUND)**（平台 404，而非 FastAPI 自己的 JSON 404）。
 
-本地开发仍使用：`cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`（与根目录 `main.py` 导出同一 `app` 实例）。
+2. **必须：Git 已推送**  
+   若本地 `git push` 失败，Vercel 仍部署旧代码，改配置也不会生效。先在 GitHub 确认最新提交已出现，再在 Vercel **Redeploy**。
+
+3. **环境变量**：在 **Settings → Environment Variables** 中按 `backend/.env.example` 配置（至少 `SUPABASE_URL`、`SUPABASE_ANON_KEY`；封面需 Storage 时加 `SUPABASE_SERVICE_ROLE_KEY` 等）。
+
+4. **`API_BASE_URL`**：设为 Vercel 域名（如 `https://xxx.vercel.app`）。
+
+5. **限制**：无持久磁盘，封面须走 **Supabase Storage**；生图等注意 **Function 超时**（见 2.2）。
+
+6. **验证**：部署成功后打开 **`/docs`**、**`/health`**；根路径 **`/`** 应返回 JSON 引导。
+
+7. **仍 NOT_FOUND 时**：在 Vercel 打开该次 **Deployment → Build Logs**，确认是否为 **Python / FastAPI** 构建成功；Framework Preset 宜为自动检测或 **Other**，勿误选成 Next.js 等前端框架。
+
+本地开发：`cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`。
 
 ---
 
