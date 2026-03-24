@@ -1,8 +1,3 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "main.py": {
-      "excludeFiles": "{static/generated/**,__pycache__/**,**/*.pyc}"
-    }
-  }
+  "$schema": "https://openapi.vercel.sh/vercel.json"
 }
