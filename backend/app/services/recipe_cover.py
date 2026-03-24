@@ -15,6 +15,7 @@ import urllib.error
 import urllib.request
 
 from app.config import settings
+from app.runtime_env import is_vercel
 
 _STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "static", "generated")
 logger = logging.getLogger(__name__)
@@ -78,8 +79,13 @@ def _upload_to_supabase(filename: str, data: bytes) -> str | None:
         return None
 
 
-def _save_to_local(filename: str, data: bytes) -> str:
+def _save_to_local(filename: str, data: bytes) -> str | None:
     """降级方案：保存到 static/generated，返回本地 URL。"""
+    if is_vercel():
+        logger.warning(
+            "Vercel 无持久磁盘，无法保存本地封面；请配置 Supabase Storage 与 service_role/anon 上传权限"
+        )
+        return None
     os.makedirs(_STATIC_DIR, exist_ok=True)
     path = os.path.join(_STATIC_DIR, filename)
     with open(path, "wb") as f:

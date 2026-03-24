@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api import recipes, forbidden, health, audit, generate_image as generate_image_router
 from app.db.postgres import init_postgres, get_forbidden_list, get_recipes_from_postgres
 from app.api.recipes import MOCK_RECIPES
+from app.runtime_env import is_vercel
 
 
 @asynccontextmanager
@@ -43,13 +44,26 @@ app.include_router(forbidden.router, prefix="/api/forbidden", tags=["禁忌清�
 app.include_router(audit.router, prefix="/api/audit", tags=["入库审计"])
 app.include_router(generate_image_router.router, prefix="/api/generate-image", tags=["生图"])
 
-# 生成图片存放目录，供入库时豆包生图保存
+# 生成图片存放目录：本地可写；Vercel Serverless 无持久磁盘，仅依赖 Supabase Storage
 import os
+
 _static_dir = os.path.join(os.path.dirname(__file__), "..", "static", "generated")
-os.makedirs(_static_dir, exist_ok=True)
-app.mount("/static/generated", StaticFiles(directory=_static_dir), name="generated")
+if not is_vercel():
+    os.makedirs(_static_dir, exist_ok=True)
+    app.mount("/static/generated", StaticFiles(directory=_static_dir), name="generated")
 
 # 在 Cursor 里查看当前「数据库」数据：启动后端后浏览器打开 /db-view
+
+
+@app.get("/")
+async def root():
+    """根路径：避免部署后打开 / 出现「无路由」；正式环境请用 /docs、/health。"""
+    return {
+        "service": "MoeChef API",
+        "docs": "/docs",
+        "health": "/health",
+        "db_view": "/db-view",
+    }
 
 
 @app.get("/db-view", response_class=HTMLResponse)

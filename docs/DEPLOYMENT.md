@@ -60,6 +60,18 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 - **反向代理**：用 Nginx 或 Caddy 做反向代理，配置 HTTPS（如 Let's Encrypt），把 `https://api.yourdomain.com` 转到 `http://127.0.0.1:8000`。
 - **API_BASE_URL**：在 `.env` 中设为 `https://api.yourdomain.com`，与对外访问的域名一致。
 
+### 2.4 将 API 部署到 Vercel（Serverless）
+
+仓库已在 `backend/` 下提供 **`main.py`（根目录）**、`vercel.json`、`.python-version`，与 [Vercel FastAPI 说明](https://vercel.com/docs/frameworks/backend/fastapi) 对齐。
+
+1. **Vercel 控制台**：导入本 Git 仓库，在 **Project → Settings → General → Root Directory** 填 **`backend`**，保存后重新部署。
+2. **环境变量**：在 Vercel **Settings → Environment Variables** 中逐项添加与 `backend/.env.example` 对应的生产变量（至少 `SUPABASE_URL`、`SUPABASE_ANON_KEY`；封面入库需 Storage 时加 `SUPABASE_SERVICE_ROLE_KEY` 与桶配置）。
+3. **`API_BASE_URL`**：设为 Vercel 提供的正式域名（如 `https://xxx.vercel.app`），与生图/回写完整图片 URL 一致。
+4. **限制**：Vercel 实例**无持久磁盘**，`/static/generated` 不会在云端挂载；封面图须 **成功上传到 Supabase Storage**。生图、豆包等接口受 **Function 超时** 限制，若频繁 504 需缩短链路或改用常驻进程托管（见 2.2）。
+5. **验证**：部署成功后访问 **`/`** 应返回 JSON 引导；**`/docs`**、**`/health`**、**`/api/recipes`** 应可用。
+
+本地开发仍使用：`cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`（与根目录 `main.py` 导出同一 `app` 实例）。
+
 ---
 
 ## 三、Web 预览 (web-preview) 部署
