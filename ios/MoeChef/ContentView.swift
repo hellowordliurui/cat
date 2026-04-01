@@ -5,6 +5,9 @@
 
 import SwiftUI
 import SwiftData
+import os.log
+
+private let logger = Logger(subsystem: "com.moechef.app", category: "Recipes")
 
 @Observable
 final class AppState {
@@ -13,6 +16,7 @@ final class AppState {
     var recipes: [Recipe] = []
     var isLoadingRecipes = true
     var didLoadRecipes = false
+    var loadError: String?
 }
 
 struct ContentView: View {
@@ -53,6 +57,19 @@ struct ContentView: View {
             guard !state.didLoadRecipes else { return }
             state.didLoadRecipes = true
             await loadRecipes()
+        }
+        .alert("加载失败", isPresented: .init(
+            get: { state.loadError != nil },
+            set: { if !$0 { state.loadError = nil } }
+        )) {
+            Button("重试") {
+                state.didLoadRecipes = false
+                state.isLoadingRecipes = true
+                Task { await loadRecipes() }
+            }
+            Button("知道了", role: .cancel) {}
+        } message: {
+            Text(state.loadError ?? "")
         }
     }
 }
@@ -112,17 +129,33 @@ private extension ContentView {
 
     func loadRecipes() async {
         let url = AppConfig.recipesURL
+        logger.info("📡 loadRecipes 请求 URL: \(url.absoluteString)")
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
+            guard let httpResponse = response as? HTTPURLResponse else {
+                let msg = "响应不是 HTTP 类型"
+                logger.error("❌ \(msg)")
                 await MainActor.run {
+                    state.loadError = msg
+                    state.recipes = []
+                    state.isLoadingRecipes = false
+                }
+                return
+            }
+            logger.info("📡 HTTP 状态码: \(httpResponse.statusCode)")
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let body = String(data: data, encoding: .utf8) ?? "(无法解码)"
+                let msg = "HTTP \(httpResponse.statusCode)\n\(body.prefix(200))"
+                logger.error("❌ 非 2xx: \(msg)")
+                await MainActor.run {
+                    state.loadError = "服务器返回 \(msg)"
                     state.recipes = []
                     state.isLoadingRecipes = false
                 }
                 return
             }
             let decoded = try JSONDecoder().decode(APIRecipesResponse.self, from: data)
+            logger.info("✅ 解码成功，共 \(decoded.items.count) 条食谱")
             let mapped = decoded.items.map { item in
                 Recipe(
                     id: item.id,
@@ -141,7 +174,10 @@ private extension ContentView {
                 state.isLoadingRecipes = false
             }
         } catch {
+            let msg = "URL: \(url.absoluteString)\n错误: \(error.localizedDescription)"
+            logger.error("❌ loadRecipes 失败: \(msg)")
             await MainActor.run {
+                state.loadError = msg
                 state.recipes = []
                 state.isLoadingRecipes = false
             }
