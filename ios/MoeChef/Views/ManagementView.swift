@@ -116,7 +116,7 @@ struct ManagementView: View {
     private static func formatBirthDate(_ date: Date) -> String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "zh_CN")
-        f.dateFormat = "yyyy年M月"
+        f.dateFormat = "yyyy年M月d日"
         return "生于" + f.string(from: date)
     }
     
