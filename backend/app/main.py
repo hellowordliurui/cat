@@ -62,8 +62,17 @@ async def root():
         "service": "MoeChef API",
         "docs": "/docs",
         "health": "/health",
+        "privacy": "/privacy",
         "db_view": "/db-view",
     }
+
+
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy_policy():
+    """隐私政策页面（App Store Connect 需要填写此 URL）。"""
+    _privacy_html = os.path.join(os.path.dirname(__file__), "..", "static", "privacy.html")
+    with open(_privacy_html, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
 
 
 @app.get("/db-view", response_class=HTMLResponse)
