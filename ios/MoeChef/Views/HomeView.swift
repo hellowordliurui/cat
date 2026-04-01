@@ -14,6 +14,7 @@ struct HomeView: View {
 
     @State private var selectedCategory: RecipeCategory = .all
     @State private var searchText = ""
+    @FocusState private var isSearchFocused: Bool
     
     private var normalizedSearchText: String {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -65,6 +66,7 @@ struct HomeView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(Theme.Colors.textSecondary)
                 TextField("搜索食品名称、食材或做法", text: $searchText)
+                    .focused($isSearchFocused)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
 
@@ -116,6 +118,7 @@ struct HomeView: View {
                         category: category,
                         isSelected: selectedCategory == category
                     ) {
+                        isSearchFocused = false
                         selectedCategory = category
                     }
                 }
@@ -219,7 +222,15 @@ struct HomeView: View {
             }
             .padding(.top, 8)
             .padding(.bottom, 32)
+            .onTapGesture {
+                isSearchFocused = false
+            }
         }
+        .simultaneousGesture(
+            DragGesture().onChanged { _ in
+                isSearchFocused = false
+            }
+        )
         .opacity(selectedCategory == tabCategory ? 1 : 0)
         .allowsHitTesting(selectedCategory == tabCategory)
         .accessibilityHidden(selectedCategory != tabCategory)
@@ -252,6 +263,7 @@ struct HomeView: View {
             // 首张强调大卡
             if let first = recipes.first {
                 Button {
+                    isSearchFocused = false
                     onRecipeTap(first)
                 } label: {
                     RecipeCardView(recipe: first, style: .large)
@@ -270,6 +282,7 @@ struct HomeView: View {
             ) {
                 ForEach(rest, id: \.id) { recipe in
                     Button {
+                        isSearchFocused = false
                         onRecipeTap(recipe)
                     } label: {
                         RecipeCardView(recipe: recipe, style: .small)
