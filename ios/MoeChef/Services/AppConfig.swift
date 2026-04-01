@@ -14,8 +14,7 @@ enum AppConfig {
         #if DEBUG
         return "http://localhost:8000"
         #else
-        // 发布/TestFlight 前请改为你的后端服务器地址（需 HTTPS）
-        return "https://你的后端域名或IP"
+        return "https://cat-zeta-six.vercel.app"
         #endif
     }
 
