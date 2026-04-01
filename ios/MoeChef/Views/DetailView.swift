@@ -13,6 +13,8 @@ struct DetailView: View {
     /// 档案体重 (kg)，用于结合 RER/DER_snack 给出辅食热量建议
     var catBodyWeightKg: Double?
     var onBack: () -> Void
+
+    @State private var dragOffset: CGFloat = 0
     
     var body: some View {
         GeometryReader { proxy in
@@ -45,6 +47,31 @@ struct DetailView: View {
                 topBar
             }
         }
+        .offset(x: dragOffset)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    // 仅允许从左侧向右滑（且起点在左侧 40pt 以内模拟边缘滑动）
+                    if value.startLocation.x < 40 && value.translation.width > 0 {
+                        dragOffset = value.translation.width
+                    }
+                }
+                .onEnded { value in
+                    if value.startLocation.x < 40 && value.translation.width > 80 {
+                        // 滑动超过 80pt 触发返回
+                        withAnimation(.easeOut(duration: 0.25)) {
+                            dragOffset = UIScreen.main.bounds.width
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            onBack()
+                        }
+                    } else {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            dragOffset = 0
+                        }
+                    }
+                }
+        )
         .navigationBarHidden(true)
     }
     
