@@ -10,12 +10,9 @@ enum AppConfig {
     /// - Debug/模拟器：http://localhost:8000
     /// - 真机调试：可改为 Mac 局域网 IP，如 http://192.168.1.100:8000
     /// - TestFlight/发布：必须改为已部署到服务器的地址，如 https://api.你的域名.com
+    /// 切换本地调试时，将下面的 URL 改为 "http://localhost:8000"
     static var backendBaseURL: String {
-        #if DEBUG
-        return "http://localhost:8000"
-        #else
         return "https://cat-zeta-six.vercel.app"
-        #endif
     }
 
     /// 食谱列表接口
