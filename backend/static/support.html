@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>猫咪漂亮饭 (MoeChef) — 技术支持</title>
+  <style>
+    :root {
+      --coral: #ff7e5f;
+      --coral-light: #fff0ec;
+      --text: #1a1a2e;
+      --text-secondary: #555;
+      --bg: #faf9f7;
+      --card: #ffffff;
+      --border: #eee;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      padding: 0;
+    }
+    .header {
+      background: linear-gradient(135deg, var(--coral), #feb47b);
+      color: #fff;
+      padding: 48px 24px 36px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .header p {
+      font-size: 15px;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 720px;
+      margin: -20px auto 40px;
+      padding: 0 20px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+    }
+    .card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--coral);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      color: var(--text);
+    }
+    .card p, .card li {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .card ul {
+      padding-left: 20px;
+      margin-bottom: 8px;
+    }
+    .card li {
+      margin-bottom: 6px;
+    }
+    .highlight {
+      background: var(--coral-light);
+      border-left: 4px solid var(--coral);
+      padding: 12px 16px;
+      border-radius: 0 10px 10px 0;
+      margin: 12px 0;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .faq-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .faq-item h3 {
+      margin-top: 0;
+      color: var(--coral);
+      font-size: 15px;
+    }
+    .faq-item p {
+      margin-bottom: 0;
+    }
+    .contact-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--coral), #feb47b);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 12px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(255,126,95,0.35);
+    }
+    .footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+      color: #999;
+    }
+    .footer a {
+      color: var(--coral);
+      text-decoration: none;
+    }
+    @media (max-width: 480px) {
+      .header { padding: 36px 16px 28px; }
+      .header h1 { font-size: 22px; }
+      .card { padding: 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🐱 猫咪漂亮饭 技术支持</h1>
+  <p>MoeChef Technical Support</p>
+</div>
+
+<div class="container">
+
+  <!-- 欢迎 -->
+  <div class="card">
+    <h2>👋 欢迎</h2>
+    <p>感谢您使用「猫咪漂亮饭」（MoeChef）！这里是我们的技术支持页面。如果您在使用过程中遇到任何问题，都可以在这里找到帮助。</p>
+  </div>
+
+  <!-- 常见问题 -->
+  <div class="card">
+    <h2>❓ 常见问题</h2>
+
+    <div class="faq-item">
+      <h3>Q: 应用需要登录才能使用吗？</h3>
+      <p>是的，本应用使用「通过 Apple 登录」（Sign in with Apple）来确保您的账户安全。Apple 登录过程中不会收集您的密码或 Apple ID 邮箱。</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Q: 我的猫咪信息会上传到服务器吗？</h3>
+      <p>不会。猫咪档案（名字、品种、体重等）完全存储在您的手机本地，使用 Apple SwiftData 框架，不会上传到任何服务器。卸载应用后数据将被清除。</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Q: 食谱内容安全吗？</h3>
+      <p>是的。每一份食谱在入库前都会经过 AI 安全审计引擎的检测，确保不包含对猫咪有害的食材（如洋葱、巧克力、葡萄等）。食谱详情页会显示安全检测标签。</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Q: 食谱加载不出来/加载很慢怎么办？</h3>
+      <p>请检查您的网络连接。食谱数据需要从云端获取，如果您处于弱网环境，可能会加载较慢。您可以尝试：① 切换 Wi-Fi/蜂窝数据 ② 完全关闭后重新打开应用 ③ 检查是否开启了 VPN。</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Q: 如何删除我的账户和数据？</h3>
+      <p>您可以在应用内「管理中心 → 账户设置 → 删除账户」来永久删除您的账户。猫咪档案数据存储在设备本地，卸载应用即可清除。您也可以通过邮件联系我们协助处理。</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Q: 应用支持哪些设备？</h3>
+      <p>本应用支持运行 iOS 17.0 及以上版本的 iPhone 和 iPad。建议更新到最新系统版本以获得最佳体验。</p>
+    </div>
+  </div>
+
+  <!-- 系统需求 -->
+  <div class="card">
+    <h2>📱 系统需求</h2>
+    <ul>
+      <li><strong>操作系统</strong>：iOS 17.0 或更高版本</li>
+      <li><strong>设备</strong>：iPhone、iPad</li>
+      <li><strong>网络</strong>：需要互联网连接以加载食谱内容</li>
+      <li><strong>存储</strong>：约 50 MB 可用空间</li>
+    </ul>
+  </div>
+
+  <!-- 联系我们 -->
+  <div class="card">
+    <h2>📬 联系我们</h2>
+    <p>如果以上内容未能解决您的问题，欢迎通过以下方式联系我们：</p>
+    <ul>
+      <li><strong>邮箱</strong>：<a href="mailto:rliu9961@gmail.com" style="color: var(--coral); text-decoration: none;">rliu9961@gmail.com</a></li>
+    </ul>
+    <p>我们会在收到您的反馈后 3 个工作日内回复。</p>
+    <div class="highlight">
+      💡 联系时请附上您的设备型号、iOS 版本号以及问题描述的截图，这将帮助我们更快定位问题。
+    </div>
+    <a href="mailto:rliu9961@gmail.com?subject=MoeChef 技术支持" class="contact-btn">📧 发送邮件</a>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>© 2026 猫咪漂亮饭 (MoeChef). All rights reserved.</p>
+  <p><a href="/privacy">隐私政策</a></p>
+</div>
+
+</body>
+</html>

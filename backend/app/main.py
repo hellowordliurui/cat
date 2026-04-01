@@ -63,6 +63,7 @@ async def root():
         "docs": "/docs",
         "health": "/health",
         "privacy": "/privacy",
+        "support": "/support",
         "db_view": "/db-view",
     }
 
@@ -72,6 +73,14 @@ async def privacy_policy():
     """隐私政策页面（App Store Connect 需要填写此 URL）。"""
     _privacy_html = os.path.join(os.path.dirname(__file__), "..", "static", "privacy.html")
     with open(_privacy_html, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+
+@app.get("/support", response_class=HTMLResponse)
+async def support_page():
+    """技术支持页面（App Store Connect 需要填写此 URL）。"""
+    _support_html = os.path.join(os.path.dirname(__file__), "..", "static", "support.html")
+    with open(_support_html, "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
 

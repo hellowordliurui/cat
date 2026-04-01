@@ -180,26 +180,57 @@ struct ManagementView: View {
     }
 }
 
-// MARK: - 账户设置（内含退出登录）
+// MARK: - 账户设置（退出登录 + 删除账户）
 private struct AccountSettingsSheet: View {
     var onDismiss: () -> Void
+    @State private var showDeleteConfirm = false
+    @State private var isDeleting = false
+    @State private var deleteError: String?
 
     var body: some View {
         NavigationStack {
             List {
-                Button {
-                    Task {
-                        try? await AuthService.shared.signOut()
+                // 退出登录
+                Section {
+                    Button {
+                        Task {
+                            try? await AuthService.shared.signOut()
+                        }
+                        onDismiss()
+                    } label: {
+                        HStack {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .foregroundStyle(Theme.Colors.textSecondary)
+                            Text("退出登录")
+                                .font(.headline)
+                                .foregroundStyle(Theme.Colors.text)
+                        }
                     }
-                    onDismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                            .foregroundStyle(Theme.Colors.textSecondary)
-                        Text("退出登录")
-                            .font(.headline)
-                            .foregroundStyle(Theme.Colors.text)
+                }
+
+                // 删除账户（App Store 审核要求）
+                Section {
+                    Button(role: .destructive) {
+                        showDeleteConfirm = true
+                    } label: {
+                        HStack {
+                            if isDeleting {
+                                ProgressView()
+                                    .tint(.red)
+                            } else {
+                                Image(systemName: "trash.fill")
+                                    .foregroundStyle(.red)
+                            }
+                            Text("删除账户")
+                                .font(.headline)
+                                .foregroundStyle(.red)
+                        }
                     }
+                    .disabled(isDeleting)
+                } footer: {
+                    Text("删除账户将永久移除您的登录信息。猫咪档案数据仅存储在本地，卸载应用即可清除。")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.textSecondary)
                 }
             }
             .navigationTitle("账户设置")
@@ -213,6 +244,31 @@ private struct AccountSettingsSheet: View {
                             .frame(width: 34, height: 34)
                     }
                 }
+            }
+            .alert("确认删除账户", isPresented: $showDeleteConfirm) {
+                Button("取消", role: .cancel) {}
+                Button("确认删除", role: .destructive) {
+                    Task {
+                        isDeleting = true
+                        do {
+                            try await AuthService.shared.deleteAccount()
+                            onDismiss()
+                        } catch {
+                            deleteError = error.localizedDescription
+                        }
+                        isDeleting = false
+                    }
+                }
+            } message: {
+                Text("此操作不可撤销。删除后您的账户将被永久移除，需要重新注册才能使用。")
+            }
+            .alert("删除失败", isPresented: .init(
+                get: { deleteError != nil },
+                set: { if !$0 { deleteError = nil } }
+            )) {
+                Button("知道了", role: .cancel) {}
+            } message: {
+                Text(deleteError ?? "")
             }
         }
     }

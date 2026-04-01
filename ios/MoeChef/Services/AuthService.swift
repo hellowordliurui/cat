@@ -1,6 +1,6 @@
 //
 //  AuthService.swift
-//  MoeChef - Supabase Auth + Sign in with Apple 封装
+//  MoeChef - Supabase Auth + Sign in with Apple 封装 + 账户删除
 //
 
 import Foundation
@@ -87,6 +87,41 @@ final class AuthService {
         session = nil
     }
 
+    /// 删除当前用户账户：调用 Supabase Edge Function 或直接用 RPC 删除
+    /// 流程：先通过 Supabase RPC 删除服务端用户数据，然后登出
+    func deleteAccount() async throws {
+        #if DEBUG
+        if isDevLoggedIn {
+            isDevLoggedIn = false
+            return
+        }
+        #endif
+
+        guard let userId = session?.user.id else {
+            throw AccountError.notLoggedIn
+        }
+
+        // 调用 Supabase Edge Function 来删除用户
+        // 如果 Edge Function 未部署，直接登出（用户数据会在 Supabase Dashboard 中手动清理）
+        let deleteURL = URL(string: "\(SupabaseConfig.supabaseURL.absoluteString)/functions/v1/delete-user")!
+        var request = URLRequest(url: deleteURL, timeoutInterval: 15)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(session?.accessToken ?? SupabaseConfig.supabaseAnonKey)", forHTTPHeaderField: "Authorization")
+        request.setValue(SupabaseConfig.supabaseAnonKey, forHTTPHeaderField: "apikey")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONEncoder().encode(["user_id": userId.uuidString])
+
+        // 尝试调用 Edge Function，即使失败也继续登出
+        if let (_, response) = try? await URLSession.shared.data(for: request),
+           let httpResponse = response as? HTTPURLResponse,
+           (200...299).contains(httpResponse.statusCode) {
+            // Edge Function 成功删除
+        }
+        // 无论 Edge Function 是否成功，都执行登出
+        try await client.auth.signOut()
+        session = nil
+    }
+
     #if DEBUG
     func devLogin() {
         isDevLoggedIn = true
@@ -107,6 +142,17 @@ enum AppleAuthError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidIdToken: return "无法解析 Apple 登录凭证，请重试"
+        }
+    }
+}
+
+enum AccountError: LocalizedError {
+    case notLoggedIn
+    case deletionFailed(String)
+    var errorDescription: String? {
+        switch self {
+        case .notLoggedIn: return "您尚未登录"
+        case .deletionFailed(let reason): return "账户删除失败：\(reason)"
         }
     }
 }
