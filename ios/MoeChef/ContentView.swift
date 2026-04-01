@@ -75,51 +75,17 @@ struct ContentView: View {
 }
 
 private extension ContentView {
-    struct APIRecipesResponse: Decodable {
-        let items: [APIRecipe]
-    }
-
+    /// Supabase REST API 直接返回数组，不需要外层包装
     struct APIRecipe: Decodable {
         let id: String
         let title: String
-        let subtitle: String
-        let category: String
-        let imageURL: String?
-        let ingredients: [APIIngredient]
-        let steps: [String]
-        let aiBreedNote: String?
-        let safetyPassed: Bool?
-
-        private enum CodingKeys: String, CodingKey {
-            case id
-            case title
-            case subtitle
-            case category
-            case imageURL
-            case image_url
-            case ingredients
-            case steps
-            case aiBreedNote
-            case safetyPassed
-            case ai_breed_note
-            case safety_passed
-        }
-
-        init(from decoder: Decoder) throws {
-            let c = try decoder.container(keyedBy: CodingKeys.self)
-            id = try c.decode(String.self, forKey: .id)
-            title = try c.decode(String.self, forKey: .title)
-            subtitle = try c.decode(String.self, forKey: .subtitle)
-            category = try c.decode(String.self, forKey: .category)
-            imageURL = try c.decodeIfPresent(String.self, forKey: .imageURL)
-                ?? c.decodeIfPresent(String.self, forKey: .image_url)
-            ingredients = try c.decode([APIIngredient].self, forKey: .ingredients)
-            steps = try c.decode([String].self, forKey: .steps)
-            aiBreedNote = try c.decodeIfPresent(String.self, forKey: .aiBreedNote)
-                ?? c.decodeIfPresent(String.self, forKey: .ai_breed_note)
-            safetyPassed = try c.decodeIfPresent(Bool.self, forKey: .safetyPassed)
-                ?? c.decodeIfPresent(Bool.self, forKey: .safety_passed)
-        }
+        let subtitle: String?
+        let category: String?
+        let image_url: String?
+        let ingredients: [APIIngredient]?
+        let steps: [String]?
+        let ai_breed_note: String?
+        let safety_passed: Bool?
     }
 
     struct APIIngredient: Decodable {
@@ -128,10 +94,29 @@ private extension ContentView {
     }
 
     func loadRecipes() async {
-        let url = AppConfig.recipesURL
-        logger.info("📡 loadRecipes 请求 URL: \(url.absoluteString)")
+        // 直接调用 Supabase PostgREST API，绕过 Vercel 后端（解决国内网络超时问题）
+        let cols = "id,title,subtitle,category,image_url,ingredients,steps,ai_breed_note,safety_passed"
+        let baseURL = SupabaseConfig.supabaseURL.absoluteString
+        let urlString = "\(baseURL)/rest/v1/recipes?select=\(cols)&order=created_at.desc"
+
+        guard let url = URL(string: urlString) else {
+            logger.error("❌ URL 构造失败: \(urlString)")
+            await MainActor.run {
+                state.loadError = "URL 构造失败"
+                state.recipes = []
+                state.isLoadingRecipes = false
+            }
+            return
+        }
+
+        logger.info("📡 loadRecipes 直连 Supabase: \(url.absoluteString)")
+
+        var request = URLRequest(url: url, timeoutInterval: 15)
+        request.setValue(SupabaseConfig.supabaseAnonKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(SupabaseConfig.supabaseAnonKey)", forHTTPHeaderField: "Authorization")
+
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 let msg = "响应不是 HTTP 类型"
                 logger.error("❌ \(msg)")
@@ -145,28 +130,29 @@ private extension ContentView {
             logger.info("📡 HTTP 状态码: \(httpResponse.statusCode)")
             guard (200...299).contains(httpResponse.statusCode) else {
                 let body = String(data: data, encoding: .utf8) ?? "(无法解码)"
-                let msg = "HTTP \(httpResponse.statusCode)\n\(body.prefix(200))"
+                let msg = "HTTP \(httpResponse.statusCode)\n\(body.prefix(300))"
                 logger.error("❌ 非 2xx: \(msg)")
                 await MainActor.run {
-                    state.loadError = "服务器返回 \(msg)"
+                    state.loadError = "Supabase 返回 \(msg)"
                     state.recipes = []
                     state.isLoadingRecipes = false
                 }
                 return
             }
-            let decoded = try JSONDecoder().decode(APIRecipesResponse.self, from: data)
-            logger.info("✅ 解码成功，共 \(decoded.items.count) 条食谱")
-            let mapped = decoded.items.map { item in
+            // Supabase PostgREST 直接返回 JSON 数组
+            let decoded = try JSONDecoder().decode([APIRecipe].self, from: data)
+            logger.info("✅ 解码成功，共 \(decoded.count) 条食谱")
+            let mapped = decoded.map { item in
                 Recipe(
                     id: item.id,
                     title: item.title,
-                    subtitle: item.subtitle,
-                    category: RecipeCategory(apiValue: item.category),
-                    imageURL: item.imageURL,
-                    ingredients: item.ingredients.map { Ingredient(name: $0.name, amount: $0.amount) },
-                    steps: item.steps,
-                    aiBreedNote: item.aiBreedNote,
-                    safetyPassed: item.safetyPassed ?? true
+                    subtitle: item.subtitle ?? "",
+                    category: RecipeCategory(apiValue: item.category ?? "all"),
+                    imageURL: item.image_url,
+                    ingredients: (item.ingredients ?? []).map { Ingredient(name: $0.name, amount: $0.amount) },
+                    steps: item.steps ?? [],
+                    aiBreedNote: item.ai_breed_note,
+                    safetyPassed: item.safety_passed ?? true
                 )
             }
             await MainActor.run {
@@ -174,7 +160,7 @@ private extension ContentView {
                 state.isLoadingRecipes = false
             }
         } catch {
-            let msg = "URL: \(url.absoluteString)\n错误: \(error.localizedDescription)"
+            let msg = "Supabase: \(url.host ?? "")\n错误: \(error.localizedDescription)"
             logger.error("❌ loadRecipes 失败: \(msg)")
             await MainActor.run {
                 state.loadError = msg
